@@ -3,19 +3,19 @@ pipeline {
     stages {
         stage('Stage 1') {
             steps {
-                echo "Stage 1 - Identifier"
+                echo "Section: 1"
                 sh "echo 'Hi 1'" 
             }
         }
         stage('Stage 2') {
             steps {
-                echo "Stage 2 - Identifier"
+                echo "Section: 2"
                 sh "echo 'Hi 2'" 
             }
         }
         stage('Stage 3') {
             steps {
-                echo "Stage 3 - Identifier"
+                echo "Section: 3"
                 sh "echo 'Hi 3'"
             }
         }
@@ -23,7 +23,7 @@ pipeline {
     post {
         always {
             script {
-                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: false
+                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
             }
         }
         success {
