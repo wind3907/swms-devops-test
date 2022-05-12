@@ -26,7 +26,7 @@ pipeline {
     post {
         always {
             script {
-                logParser projectRulePath: "${WORKSPACE}/swms-devops-test/log_parse_rules" , useProjectRule: true
+                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
             }
         }
         success {
