@@ -16,8 +16,9 @@ pipeline {
         stage('Stage 3') {
             steps {
                 echo "Stage 1 - Identifier"
-                sh "echo 'Hi 3'" 
-                echo '${WORKSPACE}'
+                sh "echo 'Hi 3'"
+                sh '/'
+                echo $WORKSPACE
             }
         }
     }
