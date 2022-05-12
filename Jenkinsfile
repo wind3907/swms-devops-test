@@ -23,7 +23,7 @@ pipeline {
     post {
         always {
             script {
-                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
+                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: false
             }
         }
         success {
