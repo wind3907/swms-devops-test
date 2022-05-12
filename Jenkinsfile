@@ -17,7 +17,8 @@ pipeline {
             steps {
                 echo "Stage 1 - Identifier"
                 sh "echo 'Hi 3'"
-                sh '/'
+                sh 'ls'
+                echo "This is workspace"
                 echo $WORKSPACE
             }
         }
