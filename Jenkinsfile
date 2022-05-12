@@ -1,20 +1,40 @@
 pipeline {
-    agent any
-    environment {
-        SSH_KEY = credentials("${params['/swms/jenkins/swms-universal-build/svc_swmsci_000/key']}")
-        BUILD_SERVER = 'rs1060b1'
-    }
+    agent { label 'master' }
     stages {
-        stage('Verifying parameters') {
+        stage('Stage 1') {
             steps {
-                echo "Section: Setting up SWMS working directory"
+                echo "Stage 1 - Identifier"
+                sh "echo 'Hi 1'" 
+            }
+        }
+        stage('Stage 2') {
+            steps {
+                echo "Stage 1 - Identifier"
+                sh "echo 'Hi 2'" 
+            }
+        }
+        stage('Stage 3') {
+            steps {
+                echo "Stage 1 - Identifier"
+                sh "echo 'Hi 3'" 
+                echo '${WORKSPACE}'
             }
         }
     }
     post {
+        always {
+            script {
+                logParser projectRulePath: "${WORKSPACE}/swms-devops-test/log_parse_rules" , useProjectRule: true
+            }
+        }
         success {
             script {
-               echo "Section: Setting up SWMS working directory"
+                echo 'Data backup restoration is successful!'
+            }
+        }
+        failure {
+            script {
+                echo 'Data backup restoration is failed!'
             }
         }
     }
