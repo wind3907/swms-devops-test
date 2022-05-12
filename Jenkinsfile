@@ -9,13 +9,13 @@ pipeline {
         }
         stage('Stage 2') {
             steps {
-                echo "Stage 1 - Identifier"
+                echo "Stage 2 - Identifier"
                 sh "echo 'Hi 2'" 
             }
         }
         stage('Stage 3') {
             steps {
-                echo "Stage 1 - Identifier"
+                echo "Stage 3 - Identifier"
                 sh "echo 'Hi 3'"
             }
         }
