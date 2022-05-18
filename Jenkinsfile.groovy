@@ -38,9 +38,7 @@ pipeline {
             }
             steps {
                 echo "Section: Verify"
-                sh """
-                    scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1:/tempfs
-                """
+                sh 'scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs'
             }
         }
         stage('Verify') {
