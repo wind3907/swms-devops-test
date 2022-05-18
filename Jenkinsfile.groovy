@@ -65,6 +65,12 @@ pipeline {
         always {
             script {
                 logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    rm -r /tempfs/verify.sh
+                    "
+                """
             }
         }
         success {
