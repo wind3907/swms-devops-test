@@ -52,7 +52,7 @@ pipeline {
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci ${WORKSPACE}/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB}
+                    beoracle_ci /tempfs/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB}
                     "
                 """
             }
