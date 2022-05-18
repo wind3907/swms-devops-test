@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo "Section: Verify"
                 sh """
-                    scp -r ${WORKSPACE}/verify.sh svc_swmsci_000@rs1060b1:/tempfs
+                    scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1:/tempfs
                 """
             }
         }
