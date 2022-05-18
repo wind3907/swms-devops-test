@@ -30,6 +30,19 @@ pipeline {
                 """
             }
         }
+        stage('Copying Scripts') {
+            when {
+                expression { 
+                    params.SOURCE_DB.getAt(5) == 'e' && params.TARGET_DB.substring(0,7) == 'rds_trn' 
+                }
+            }
+            steps {
+                echo "Section: Verify"
+                sh """
+                    scp -r ${WORKSPACE}/verify.sh svc_swmsci_000@rs1060b1:/tempfs
+                """
+            }
+        }
         stage('Verify') {
             when {
                 expression { 
