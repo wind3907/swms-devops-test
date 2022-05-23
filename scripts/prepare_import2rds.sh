@@ -1,8 +1,13 @@
 . /usr/lpp/oracle/.profile.19c
-TARGET_DB=$1
-ROOTPW=$2
+
+SOURCEDB=$1
+TARGETDB=$2
+ROOTPW=$3
+AIXDBBK=$4
+
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
+
 cd /home2/dba/jcx/11gtords
 sed "s/swm1_lx739q3/$TARGET_DB/g" create_dblink.sql.swm1_lx739q3|sed "s/xxxxxx/$ROOTPW/g" >create_dblink.sql
 sed "s/swm1_lx739q3/$TARGET_DB/g" transfertoRDS.sql.swm1_lx739q3 >transfertoRDS.sql
