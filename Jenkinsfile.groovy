@@ -5,11 +5,6 @@ pipeline {
     }
     stages {
         stage('Copying Scripts') {
-            when {
-                expression { 
-                    params.SOURCE_DB.getAt(5) == 'e' && params.TARGET_DB.substring(0,7) == 'rds_trn' 
-                }
-            }
             steps {
                 echo "Section: Copying Scripts"
                 sh '${WORKSPACE}/scripts/copying_scripts.sh'
