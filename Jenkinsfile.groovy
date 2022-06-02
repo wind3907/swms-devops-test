@@ -8,7 +8,7 @@ pipeline {
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        ORACLE_KEY = credentials('/swms/deployment_automation/nonprod/oracle/master_creds/${params['HOST']}')   
+        ORACLE_KEY = credentials('/swms/deployment_automation/nonprod/oracle/master_creds/${params.HOST}')   
     }
     stages {
         stage('Verifying parameters') {
