@@ -23,7 +23,7 @@ pipeline {
                     echo Error: Please use rsxxxe
                     exit
                     fi 
-                    if [ \( "`echo ${params.TARGET_DB} | cut -c1-2`" = "lx" \) -a \( "`echo ${params.TARGET_DB} | cut -c6-8`" = "trn" \) ]; then
+                    if [ ( "`echo ${params.TARGET_DB} | cut -c1-2`" = "lx" ) -a ( "`echo ${params.TARGET_DB} | cut -c6-8`" = "trn" ) ]; then
                     echo Good This is RDS db server ${params.TARGET_DB}
                     else
                     echo Error: Please use rds_trn_xxx
