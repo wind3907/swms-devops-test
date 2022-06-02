@@ -37,6 +37,17 @@ pipeline {
                 sh '${WORKSPACE}/scripts/copying_scripts.sh'
             }
         }
+        stage('Verify') {
+            steps {
+                echo "Section: Verify"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
     }
     post {
         always {
