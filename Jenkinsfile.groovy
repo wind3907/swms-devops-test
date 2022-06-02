@@ -8,7 +8,7 @@ pipeline {
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        ORACLE_KEY = credentials('/swms/deployment_automation/nonprod/oracle/master_creds/${params.HOST}')   
+        ORACLE_KEY = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params['HOST']}")   
     }
     stages {
         stage('Verifying parameters') {
@@ -39,6 +39,17 @@ pipeline {
         }
     }
     post {
+        always {
+            script {
+                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci rm -r /tempfs/11gtords/;
+                    "
+                """
+            }
+        }
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
