@@ -23,12 +23,6 @@ pipeline {
                     echo Error: Please use rsxxxe
                     exit
                     fi 
-                    if [ ( "`echo ${params.TARGET_DB} | cut -c1-2`" = "lx" ) -a ( "`echo ${params.TARGET_DB} | cut -c6-8`" = "trn" ) ]; then
-                    echo Good This is RDS db server ${params.TARGET_DB}
-                    else
-                    echo Error: Please use rds_trn_xxx
-                    exit
-                    fi
                 """
             }
         }
@@ -122,7 +116,6 @@ pipeline {
     post {
         always {
             script {
-                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
