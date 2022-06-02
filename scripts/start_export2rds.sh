@@ -2,4 +2,4 @@
 
 export ORACLE_SID=swm1
 
-expdp \"/ as sysdba\" parfile=/home2/dba/jcx/11gtords/expswms.par
+expdp \"/ as sysdba\" parfile=/tempfs/11gtords/expswms.par

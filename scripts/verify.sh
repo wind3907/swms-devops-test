@@ -22,6 +22,5 @@ grep ". . imported " swms_imprds.log
 sqlplus root/$ROOTPW@$TARGETDB << EOF
 select max(trans_date) from trans;
 select * from swms.maintenance where component='COMPANY';
-alter user swms identified by swms;
 exit
 EOF

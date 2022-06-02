@@ -8,4 +8,4 @@ AIXDBBK=$4
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
 
-impdp root/$ROOTPW@$TARGETDB parfile=/home2/dba/jcx/11gtords/impswms.par
+impdp root/$ROOTPW@$TARGETDB parfile=/tempfs/11gtords/impswms.par
