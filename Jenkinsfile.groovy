@@ -40,11 +40,14 @@ pipeline {
         stage('Execute 45 Script') {
             steps {
                 echo "Section: Execute 45 Script"
-                sh 'scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/swms/curr/schemas/'
+                sh """
+                    scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
+                """
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
                     . ~/.profile;
-                    beswms_ci /swms/curr/schemas/45_script/all_target_45_2.sh ${ORACLE_KEY_USR} ${ORACLE_KEY}
+                    beswms_ci cp -r /tempfs/all_target_45_2.sh /swms/curr/schemas/;
+                    beswms_ci /swms/curr/schemas/all_target_45_2.sh ${ORACLE_KEY_USR} ${ORACLE_KEY};
                     "
                 """           
             }
@@ -53,7 +56,6 @@ pipeline {
     post {
         always {
             script {
-                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
