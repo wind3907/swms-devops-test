@@ -45,9 +45,8 @@ pipeline {
                 """
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
-                    . ~/.profile;
-                    beswms_ci cp -r /tempfs/all_target_45_2.sh /swms/curr/schemas/;
-                    beswms_ci /swms/curr/schemas/all_target_45_2.sh ${ORACLE_KEY_USR} ${ORACLE_KEY};
+                    /ts/curr/bin/beswms_ci cp -r /tempfs/all_target_45_2.sh /swms/curr/schemas/;
+                    /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh ${ORACLE_KEY_USR} ${ORACLE_KEY};
                     "
                 """           
             }
