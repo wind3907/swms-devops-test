@@ -37,15 +37,16 @@ pipeline {
                 sh '${WORKSPACE}/scripts/copying_scripts.sh'
             }
         }
-        stage('Verify') {
+        stage('Execute 45 Script') {
             steps {
-                echo "Section: Verify"
+                echo "Section: Execute 45 Script"
+                sh 'scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/swms/curr/schemas/'
                 sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    beswms_ci /swms/curr/schemas/45_script/all_target_45_2.sh ${ORACLE_KEY_USR} ${ORACLE_KEY}
                     "
-                """
+                """           
             }
         }
     }
