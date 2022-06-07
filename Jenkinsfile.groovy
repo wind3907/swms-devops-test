@@ -5,6 +5,7 @@ pipeline {
         string(name: 'TARGET_DB', defaultValue: 'rds_trn_xxx', description: 'Target Database. eg: rds_trn_040')
         string(name: 'ROOT_PW', defaultValue: 'SwmsRoot1234', description: 'Root Password')
         string(name: 'HOST', defaultValue: 'lxxxxtrn', description: 'Host ec2 instance. eg: lx036trn')
+        string(name: 'IP_ADDRESS', defaultValue: '10.133.72.178', description: 'IP Address of the HOst')
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
