@@ -2,7 +2,6 @@
 
 OUTPUTFILE=/tmp/swms/log/all_target_45_2.log
 
-
 ORACLE_USER=$1
 ORACLE_PW=$2
 

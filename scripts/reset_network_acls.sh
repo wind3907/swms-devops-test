@@ -4,6 +4,7 @@ SOURCEDB=$1
 TARGETDB=$2
 ROOTPW=$3
 AIXDBBK=$4
+TARGETDB_IP=$2
 
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
@@ -16,7 +17,7 @@ DECLARE
 	* Short DNS doesn't work from remote DB instance.
 	* Route 53 Domain is too long for the config_flag_val column
 	*/
-	swms_host VARCHAR2(20) := '$TARGETDB.swms-np.us-east-1.aws.sysco.net';
+	swms_host VARCHAR2(20) := '$TARGETDB_IP';
 BEGIN
 	$if swms.platform.SWMS_REMOTE_DB $then
 		SELECT COUNT(*) INTO  v_swms_host_exists FROM  swms.sys_config
