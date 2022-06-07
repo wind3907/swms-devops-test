@@ -47,73 +47,72 @@ pipeline {
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
                     /ts/curr/bin/beswms_ci cp -r /tempfs/all_target_45_2.sh /swms/curr/schemas/;
-                    /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
                     "
                 """           
             }
         }
-        stage('RDS Configurations') {
-            steps {
-                echo "Section: RDS Configurations"
-                dir("swms-opco")
-                {
-                    git branch: 'develop',
-                    credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
-                    url: 'git@github.com:SyscoCorporation/swms-opco.git'
-                }
-                sh 'scp -i $SSH_KEY ${WORKSPACE}/swms-opco/configuration/rds/queues/* ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/home2/dba/jcx/11gtords/rdsconfig/'
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/rds_configurations.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-                    "
-                """           
-            }
-        }
-        stage('Reset Hash Password') {
-            steps {
-                echo "Section: Reset Hash Password"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/reset_hashpw.sh
-                    "
-                """           
-            }
-        }
-        stage('Alter USER SWMS') {
-            steps {
-                echo "Section: Alter USER SWMS"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/alter_user.sh
-                    "
-                """
-            }
-        }
-        stage('Reset network ACLs on RDS') {
-            steps {
-                echo "Section: Reset network ACLs on RDS"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${params.IP_ADDRESS}
-                    "
-                """
-            }
-        }
-        stage('Update sys_config') {
-            steps {
-                echo "Section: Update sys_config"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/update_sysconfig.sh
-                    "
-                """
-            }
-        }
+        // stage('RDS Configurations') {
+        //     steps {
+        //         echo "Section: RDS Configurations"
+        //         dir("swms-opco")
+        //         {
+        //             git branch: 'develop',
+        //             credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
+        //             url: 'git@github.com:SyscoCorporation/swms-opco.git'
+        //         }
+        //         sh 'scp -i $SSH_KEY ${WORKSPACE}/swms-opco/configuration/rds/queues/* ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/home2/dba/jcx/11gtords/rdsconfig/'
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/rds_configurations.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+        //             "
+        //         """           
+        //     }
+        // }
+        // stage('Reset Hash Password') {
+        //     steps {
+        //         echo "Section: Reset Hash Password"
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/reset_hashpw.sh
+        //             "
+        //         """           
+        //     }
+        // }
+        // stage('Alter USER SWMS') {
+        //     steps {
+        //         echo "Section: Alter USER SWMS"
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/alter_user.sh
+        //             "
+        //         """
+        //     }
+        // }
+        // stage('Reset network ACLs on RDS') {
+        //     steps {
+        //         echo "Section: Reset network ACLs on RDS"
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${params.IP_ADDRESS}
+        //             "
+        //         """
+        //     }
+        // }
+        // stage('Update sys_config') {
+        //     steps {
+        //         echo "Section: Update sys_config"
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/update_sysconfig.sh
+        //             "
+        //         """
+        //     }
+        // }
     }
     post {
         always {
