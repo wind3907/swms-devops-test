@@ -44,8 +44,8 @@ pipeline {
                     scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
                 """
                 sh """
-                    . ~/.bash_profile
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
+                    . ~/.bash_profile
                     beswms_ci cp -r /tempfs/all_target_45_2.sh /swms/curr/schemas/;
                     "
                 """           
