@@ -86,8 +86,7 @@ pipeline {
             script {
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci rm -r /tempfs/11gtords/;
+                    /ts/curr/bin/beswms_ci rm -r /tempfs/11gtords/;
                     "
                 """
             }
