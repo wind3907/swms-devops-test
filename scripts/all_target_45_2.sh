@@ -2,8 +2,9 @@
 
 OUTPUTFILE=/tmp/swms/log/all_target_45_2.log
 
-read ORACLE_USER
-read ORACLE_PW
+
+ORACLE_USER=$1
+ORACLE_PW=$2
 
 sqlplus -s ${ORACLE_USER}/${ORACLE_PW} <<EOF> ${OUTPUTFILE}
 var rc number;

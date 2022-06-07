@@ -13,3 +13,8 @@ sqlplus swms/swms@$TARGETDB << EOF
 @/home2/dba/jcx/11gtords/rdsconfig/create_async_log_sq_ddl.sql
 exit
 EOF
+
+sqlplus root/$ROOTPW@$TARGETDB << EOF
+@/home2/dba/jcx/11gtords/rdsconfig/grants_for_aq.sql
+exit
+EOF

@@ -3,6 +3,12 @@
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
 
+sqlplus swms/swms@$TARGETDB << EOF
+grant execute on frm_login to swms_sys;
+exit
+EOF
+
+
 sqlplus root/$ROOTPW@$TARGETDB << EOF
 CREATE OR REPLACE  PROCEDURE "SWMS_SYS"."SET_HASH_PASSWORD" 
     (p_username IN VARCHAR2) AS
