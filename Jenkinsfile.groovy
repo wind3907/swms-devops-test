@@ -48,7 +48,7 @@ pipeline {
         stage('Verifying parameters') {
             steps {
                 echo "Section: Verifying parameters"
-                println ${params.SOURCE_DB}
+                echo "test ${params.SOURCE_DB}"
             }
         }
         // stage('Verifying parameters') {
