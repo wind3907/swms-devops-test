@@ -4,7 +4,7 @@ SOURCEDB=$1
 TARGETDB=$2
 ROOTPW=$3
 AIXDBBK=$4
-TARGETDB_IP=$2
+TARGETDB_IP=$5
 
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
