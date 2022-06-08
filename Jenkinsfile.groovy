@@ -72,39 +72,39 @@ pipeline {
         //         """           
         //     }
         // }
-        stage('Reset Hash Password') {
+        // stage('Reset Hash Password') {
+        //     steps {
+        //         echo "Section: Reset Hash Password"
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci /tempfs/11gtords/reset_hashpw.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+        //             "
+        //         """           
+        //     }
+        // }
+        stage('Alter USER SWMS') {
             steps {
-                echo "Section: Reset Hash Password"
+                echo "Section: Alter USER SWMS"
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/reset_hashpw.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
                     "
-                """           
+                """
             }
         }
-        // stage('Alter USER SWMS') {
-        //     steps {
-        //         echo "Section: Alter USER SWMS"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/alter_user.sh
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Reset network ACLs on RDS') {
-        //     steps {
-        //         echo "Section: Reset network ACLs on RDS"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${params.IP_ADDRESS}
-        //             "
-        //         """
-        //     }
-        // }
+        stage('Reset network ACLs on RDS') {
+            steps {
+                echo "Section: Reset network ACLs on RDS"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${params.IP_ADDRESS}
+                    "
+                """
+            }
+        }
         // stage('Update sys_config') {
         //     steps {
         //         echo "Section: Update sys_config"
