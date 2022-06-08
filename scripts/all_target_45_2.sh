@@ -1,7 +1,7 @@
 ORACLE_USER=$1
 ORACLE_PW=$2
 
-sqlplus -s ${ORACLE_USER}/${ORACLE_PW} <<EOF
+sqlplus -s ${ORACLE_USER}/${ORACLE_PW}@SWM1_PROD <<EOF
 var rc number;
 whenever sqlerror exit :rc;
 exec :rc:=1;
