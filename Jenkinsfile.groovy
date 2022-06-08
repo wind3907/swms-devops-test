@@ -45,6 +45,11 @@ pipeline {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')  
     }
     stages {
+        stage('Verifying parameters') {
+            steps {
+                echo "Section: Verifying parameters"
+            }
+        }
         // stage('Verifying parameters') {
         //     steps {
         //         echo "Section: Verifying parameters"
