@@ -83,39 +83,42 @@ pipeline {
         //         """           
         //     }
         // }
-        stage('Alter USER SWMS') {
-            steps {
-                echo "Section: Alter USER SWMS"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-                    "
-                """
-            }
-        }
-        stage('Reset network ACLs on RDS') {
-            steps {
-                echo "Section: Reset network ACLs on RDS"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${params.IP_ADDRESS}
-                    "
-                """
-            }
-        }
-        // stage('Update sys_config') {
+        // stage('Alter USER SWMS') {
         //     steps {
-        //         echo "Section: Update sys_config"
+        //         echo "Section: Alter USER SWMS"
         //         sh """
         //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
         //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/update_sysconfig.sh
+        //             beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
         //             "
         //         """
         //     }
         // }
+        stage('Reset network ACLs on RDS') {
+            steps {
+                echo "Section: Reset network ACLs on RDS"
+
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    HOST_IP=$(dig +short ${params.host}.swms-np.us-east-1.aws.sysco.net | head -n 1);
+                    echo $HOST_IP;
+                    beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${HOST_IP}
+                    "
+                """
+            }
+        }
+        stage('Update sys_config') {
+            steps {
+                echo "Section: Update sys_config"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/update_sysconfig.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
     }
     post {
         always {
