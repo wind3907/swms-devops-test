@@ -1,7 +1,7 @@
 ORACLE_USER=$1
 ORACLE_PW=$2
 
-sqlplus -s ${ORACLE_USER}/${ORACLE_PW} <<EOF> /tmp/swms/log/all_target_45_2.log
+sqlplus -s ${ORACLE_USER}/${ORACLE_PW} <<EOF
 var rc number;
 whenever sqlerror exit :rc;
 exec :rc:=1;
