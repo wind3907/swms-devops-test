@@ -148,27 +148,27 @@ pipeline {
         //         }       
         //     }
         // }
-        stage("Trigger deployment") {
-            steps {
-                script {
-                    try {
-                        build job: "${DEPLOY_PIPELINE_NAME}", parameters: [
-                            string(name: 'target_server_name', value: "${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net"),
-                            string(name: 'artifact_s3_bucket', value: "${params.S3_BUCKET_NAME}"),
-                            string(name: 'platform', value: "${params.PLATFORM}"),
-                            string(name: 'artifact_version', value: "${params.SWMS_VERSION}"),
-                            string(name: 'artifact_name', value: "${params.S3_ARTIFACT_NAME}"),
-                            string(name: 'dba_masterfile_names', value: "${params.PRIV_MASTER_SCRIPT_FILES}"),
-                            string(name: 'master_file_retry_count', value: "${params.MASTER_FILE_RETRY_COUNT}")
-                        ]
-                        env.DEPLOY_STATUS = "SUCCESSFUL"
-                    } catch (e) {
-                        env.DEPLOY_STATUS = "FAILED"
-                        throw e
-                    }
-                }
-            }
-        }
+        // stage("Trigger deployment") {
+        //     steps {
+        //         script {
+        //             try {
+        //                 build job: "${DEPLOY_PIPELINE_NAME}", parameters: [
+        //                     string(name: 'target_server_name', value: "${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net"),
+        //                     string(name: 'artifact_s3_bucket', value: "${params.S3_BUCKET_NAME}"),
+        //                     string(name: 'platform', value: "${params.PLATFORM}"),
+        //                     string(name: 'artifact_version', value: "${params.SWMS_VERSION}"),
+        //                     string(name: 'artifact_name', value: "${params.S3_ARTIFACT_NAME}"),
+        //                     string(name: 'dba_masterfile_names', value: "${params.PRIV_MASTER_SCRIPT_FILES}"),
+        //                     string(name: 'master_file_retry_count', value: "${params.MASTER_FILE_RETRY_COUNT}")
+        //                 ]
+        //                 env.DEPLOY_STATUS = "SUCCESSFUL"
+        //             } catch (e) {
+        //                 env.DEPLOY_STATUS = "FAILED"
+        //                 throw e
+        //             }
+        //         }
+        //     }
+        // }
         // stage('RDS Configurations') {
         //     steps {
         //         echo "Section: RDS Configurations"
