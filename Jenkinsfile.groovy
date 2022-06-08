@@ -98,13 +98,10 @@ pipeline {
             steps {
                 echo "Section: Reset network ACLs on RDS"
                 script {
-                    HOST_IP = sh (
-                        script: 'dig +short ${params.HOST}.swms-np.us-east-1.aws.sysco.net | head -n 1',
-                        returnStdout: true
-                    ).trim()
+                    def HOST_IP = sh(script: "dig +short ${params.HOST}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)
+                    println HOST_IP
 
-                    echo '${HOST_IP}'
-                    echo ${HOST_IP}
+                    echo $HOST_IP
                     
                     // sh """
                     //     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
