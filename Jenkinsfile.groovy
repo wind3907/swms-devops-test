@@ -41,12 +41,13 @@ pipeline {
         stage('Execute 45 Script') {
             steps {
                 echo "Section: Execute 45 Script"
-                // sh """
-                //     scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
-                // """
+                sh """
+                    scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
+                """
                 timeout(time: 3, unit: 'MINUTES') {
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
+                        /ts/curr/bin/beswms_ci cp /tempfs/all_target_45_2.sh /swms/curr/schemas/;
                         /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
                         echo 'success';
                         "
