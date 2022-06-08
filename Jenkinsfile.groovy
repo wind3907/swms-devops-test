@@ -34,7 +34,7 @@ properties(
                         ],
                 string(name: 'dba_masterfile_names', description: 'The name of the artifact to deploy', defaultValue: 'R50_0_dba_master.sql', trim: true),
                 string(name: 'master_file_retry_count', description: 'Amount of attempts to apply the master file. This is setup to handle circular dependencies by running the same master file multiple times.', defaultValue: '3', trim: true)
-
+                separator(name: "test", sectionHeader: "Data Migration Parameters", separatorStyle: "border-color: orange;", separatorHeaderStyle: "font-weight: bold; line-height: 1.5em; font-size: 1.5em;")
             ]
         )
     ]
@@ -48,6 +48,7 @@ pipeline {
         stage('Verifying parameters') {
             steps {
                 echo "Section: Verifying parameters"
+                println ${params.SOURCE_DB}
             }
         }
         // stage('Verifying parameters') {
