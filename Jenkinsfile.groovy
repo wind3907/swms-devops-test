@@ -99,7 +99,7 @@ pipeline {
                 echo "Section: Reset network ACLs on RDS"
                 script {
                     HOST_IP = sh (
-                        script: '$(dig +short ${params.HOST}.swms-np.us-east-1.aws.sysco.net | head -n 1)',
+                        script: 'dig +short ${params.HOST}.swms-np.us-east-1.aws.sysco.net | head -n 1',
                         returnStdout: true
                     ).trim()
 
