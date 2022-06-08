@@ -44,11 +44,15 @@ pipeline {
                 // sh """
                 //     scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
                 // """
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
-                    /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
-                    "
-                """           
+                timeout(time: 3, unit: 'MINUTES') {
+                    retry(2) {
+                        sh """
+                            ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
+                            /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
+                            "
+                        """    
+                    }
+                }       
             }
         }
         // stage('RDS Configurations') {
