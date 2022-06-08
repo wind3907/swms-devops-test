@@ -1,15 +1,41 @@
 pipeline {
     agent { label 'master' }
     parameters {
-        string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e')
-        string(name: 'TARGET_DB', defaultValue: 'rds_trn_xxx', description: 'Target Database. eg: rds_trn_040')
-        string(name: 'ROOT_PW', defaultValue: 'SwmsRoot1234', description: 'Root Password')
-        string(name: 'HOST', defaultValue: 'lxxxxtrn', description: 'Host ec2 instance. eg: lx036trn')
-        string(name: 'IP_ADDRESS', defaultValue: '10.133.72.178', description: 'IP Address of the HOst')
+        string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e'),
+        string(name: 'TARGET_DB', defaultValue: 'rds_trn_xxx', description: 'Target Database. eg: rds_trn_040'),
+        string(name: 'ROOT_PW', defaultValue: 'SwmsRoot123', description: 'Root Password'),
+        string(name: 'TARGET_SERVER', defaultValue: 'lxxxxtrn', description: 'Host ec2 instance. eg: lx036trn'),
+        choice(name: 'artifact_s3_bucket', choices: ['swms-build-artifacts', 'swms-build-dev-artifacts'], description: 'The build\'s targeted platform'),
+        choice(name: 'platform', choices: ['linux','aix_11g_11g', 'aix_19c_12c'], description: 'The build\'s targeted platform'),
+        string(name: 'artifact_version', defaultValue: '50_0', description: 'The swms version to deploy', trim: true),
+        [
+                    name: 'artifact_name',
+                    description: 'The name of the artifact to deploy',
+                    $class: 'CascadeChoiceParameter',
+                    choiceType: 'PT_SINGLE_SELECT',
+                    filterLength: 1,
+                    filterable: false,
+                    randomName: 'choice-parameter-artifact_name',
+                    referencedParameters: 'artifact_s3_bucket, platform, artifact_version',
+                    script: [
+                        $class: 'GroovyScript',
+                        script: [classpath: [], sandbox: false, script: '''\
+                                if (platform?.trim() && artifact_version?.trim()) {
+                                    def process = "aws s3api list-objects --bucket ${artifact_s3_bucket} --prefix ${platform}-${artifact_version} --query Contents[].Key".execute()
+                                    return process.text.replaceAll('"', "").replaceAll("\\n","").replaceAll(" ","").tokenize(',[]')
+                                } else {
+                                    return []
+                                }
+                            '''.stripIndent()
+                        ]
+                    ]
+                ],
+        string(name: 'dba_masterfile_names', description: 'The name of the artifact to deploy', defaultValue: 'R50_0_dba_master.sql', trim: true),
+        string(name: 'master_file_retry_count', description: 'Amount of attempts to apply the master file. This is setup to handle circular dependencies by running the same master file multiple times.', defaultValue: '3', trim: true)
+
     }
     environment {
-        SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        ORACLE_KEY = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params['HOST']}")   
+        SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')  
     }
     stages {
         stage('Verifying parameters') {
@@ -38,76 +64,165 @@ pipeline {
                 sh '${WORKSPACE}/scripts/copying_scripts.sh'
             }
         }
-        // stage('Execute 45 Script') {
-        //     steps {
-        //         echo "Section: Execute 45 Script"
-        //         sh """
-        //             scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net:/tempfs/
-        //         """
-        //         timeout(time: 3, unit: 'MINUTES') {
-        //             sh """
-        //                 ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.HOST}.swms-np.us-east-1.aws.sysco.net "
-        //                 /ts/curr/bin/beswms_ci cp /tempfs/all_target_45_2.sh /swms/curr/schemas/;
-        //                 /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
-        //                 "
-        //             """
-        //         }       
-        //     }
-        // }
-        // stage('RDS Configurations') {
-        //     steps {
-        //         echo "Section: RDS Configurations"
-        //         dir("swms-opco")
-        //         {
-        //             git branch: 'develop',
-        //             credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
-        //             url: 'git@github.com:SyscoCorporation/swms-opco.git'
-        //         }
-        //         sh 'scp -i $SSH_KEY ${WORKSPACE}/swms-opco/configuration/rds/queues/* ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/home2/dba/jcx/11gtords/rdsconfig/'
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/rds_configurations.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """           
-        //     }
-        // }
-        // stage('Reset Hash Password') {
-        //     steps {
-        //         echo "Section: Reset Hash Password"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/reset_hashpw.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """           
-        //     }
-        // }
-        // stage('Alter USER SWMS') {
-        //     steps {
-        //         echo "Section: Alter USER SWMS"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Reset network ACLs on RDS') {
-        //     steps {
-        //         echo "Section: Reset network ACLs on RDS"
-        //         script {
-        //             def HOST_IP = sh(script: "dig +short ${params.HOST}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
-        //             sh """
-        //                 ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //                 . ~/.profile;
-        //                 beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${HOST_IP}
-        //                 "
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Restore 11g db') {
+            steps {
+                echo "Section: Restore 11g db,prepare db export and get db export"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/restore11g.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
+        stage('Prepare db export to RDS') {
+            steps {
+                echo "Section: Restore 11g db,prepare db export and get db export"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/prepare_export2rds.sh
+                    "
+                """
+            }
+        }
+        stage('Start db export to RDS') {
+            steps {
+                echo "Section: Restore 11g db,prepare db export and get db export"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/start_export2rds.sh
+                    "
+                """
+            }
+        }
+        stage('Prepare db import to RDS') {
+            steps {
+                echo "Section: Prepare db import to RDS"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/prepare_import2rds.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
+        stage('Start db import to RDS') {
+            steps {
+                echo "Section: Start db import to RDS"
+                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                        . ~/.profile;
+                        beoracle_ci /tempfs/11gtords/start_import2rds.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                        "
+                    """
+                }
+            }
+        }
+        stage('Verify') {
+            steps {
+                echo "Section: Verify"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
+        stage('Execute 45 Script') {
+            steps {
+                echo "Section: Execute 45 Script"
+                sh """
+                    scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net:/tempfs/
+                """
+                timeout(time: 3, unit: 'MINUTES') {
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net "
+                        /ts/curr/bin/beswms_ci cp /tempfs/all_target_45_2.sh /swms/curr/schemas/;
+                        /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
+                        "
+                    """
+                }       
+            }
+        }
+        stage("Trigger deployment") {
+            steps {
+                script {
+                    try {
+                        build job: "${DEPLOY_PIPELINE_NAME}", parameters: [
+                            string(name: 'target_server_name', value: "${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net"),
+                            string(name: 'artifact_s3_bucket', value: "${params.S3_BUCKET_NAME}"),
+                            string(name: 'platform', value: "${params.PLATFORM}"),
+                            string(name: 'artifact_version', value: "${params.SWMS_VERSION}"),
+                            string(name: 'artifact_name', value: "${params.S3_ARTIFACT_NAME}"),
+                            string(name: 'dba_masterfile_names', value: "${params.PRIV_MASTER_SCRIPT_FILES}"),
+                            string(name: 'master_file_retry_count', value: "${params.MASTER_FILE_RETRY_COUNT}")
+                        ]
+                        env.DEPLOY_STATUS = "SUCCESSFUL"
+                    } catch (e) {
+                        env.DEPLOY_STATUS = "FAILED"
+                        throw e
+                    }
+                }
+            }
+        }
+        stage('RDS Configurations') {
+            steps {
+                echo "Section: RDS Configurations"
+                dir("swms-opco")
+                {
+                    git branch: 'develop',
+                    credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
+                    url: 'git@github.com:SyscoCorporation/swms-opco.git'
+                }
+                sh 'scp -i $SSH_KEY ${WORKSPACE}/swms-opco/configuration/rds/queues/* ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/home2/dba/jcx/11gtords/rdsconfig/'
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/rds_configurations.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """           
+            }
+        }
+        stage('Reset Hash Password') {
+            steps {
+                echo "Section: Reset Hash Password"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/reset_hashpw.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """           
+            }
+        }
+        stage('Alter USER SWMS') {
+            steps {
+                echo "Section: Alter USER SWMS"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
+                    "
+                """
+            }
+        }
+        stage('Reset network ACLs on RDS') {
+            steps {
+                echo "Section: Reset network ACLs on RDS"
+                script {
+                    def HOST_IP = sh(script: "dig +short ${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                        . ~/.profile;
+                        beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${HOST_IP}
+                        "
+                    """
+                }
+            }
+        }
         stage('Update sys_config') {
             steps {
                 echo "Section: Update sys_config"
@@ -123,9 +238,11 @@ pipeline {
     post {
         always {
             script {
+                logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    /ts/curr/bin/beswms_ci rm -r /tempfs/11gtords/;
+                    . ~/.profile;
+                    beoracle_ci rm -r /tempfs/11gtords/
                     "
                 """
             }
