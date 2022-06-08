@@ -98,11 +98,13 @@ pipeline {
             steps {
                 echo "Section: Reset network ACLs on RDS"
 
+                HOST_IP = sh (
+                    script: '$(dig +short ${params.host}.swms-np.us-east-1.aws.sysco.net | head -n 1)',
+                    returnStdout: true
+                ).trim()
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    HOST_IP=$(dig +short ${params.host}.swms-np.us-east-1.aws.sysco.net | head -n 1);
-                    echo $HOST_IP;
                     beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${HOST_IP}
                     "
                 """
