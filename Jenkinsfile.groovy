@@ -54,42 +54,34 @@ pipeline {
                 echo "test ${params.SOURCE_DB}"
             }
         }
-        // stage('Create AWS RDS snapshot') {
-        //     steps {
-        //         echo "Section: Create AWS RDS snapshot"
-        //         script{
-        //             sh(
-        //                 script: '''
-        //                     set +x
-        //                     aws_creds="$(aws sts assume-role --role-arn "${S3_ACCESS_ARN}" \
-        //                                             --role-session-name "${AWS_ROLE_SESSION_NAME}" \
-        //                                             --duration-seconds 900 | jq --raw-output '.Credentials')"
-        //                     export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
-        //                     export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
-        //                     export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
-        //                     export DATE_TIME=$(date +'%m-%d-%Y-%H-%M')
-        //                     export SNAPSHOT_NAME="before-data-migration-$DATE_TIME"
-        //                     aws rds create-db-snapshot \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                     aws rds wait db-snapshot-available \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                 '''.stripIndent(),
-        //                 returnStatus: true)
-        //         }
-        //     }
-        // }
-        stage('Cleaning Older RDS snapshot') {
+        stage('Create AWS RDS snapshot') {
             steps {
-                echo "Section: Cleaning Older RDS snapshot"
-                // return process.text
+                echo "Section: Create AWS RDS snapshot"
                 script{
                     env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
                     env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
-                    sh(script: "echo '$DATE_TIME'", returnStdout: true)
-                    def process = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
-                    echo "Output: ${process.text}"
+                    // sh(
+                    //     script: '''
+                    //         aws rds create-db-snapshot \
+                    //             --db-instance-identifier $RDS_INSTANCE \
+                    //             --db-snapshot-identifier $SNAPSHOT_NAME
+                    //         aws rds wait db-snapshot-available \
+                    //             --db-instance-identifier $RDS_INSTANCE \
+                    //             --db-snapshot-identifier $SNAPSHOT_NAME
+                    //     '''.stripIndent(),
+                    //     returnStatus: true)
+                }
+            }
+        }
+        stage('Cleaning Older RDS snapshot') {
+            steps {
+                echo "Section: Cleaning Older RDS snapshot"
+                script{
+                    // sh(script: "echo '$DATE_TIME'", returnStdout: true)
+                    // def old_snapshot = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
+                    
+                    sh(script: "echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version", returnStdout: true)
+                    // echo "Output: ${old_snapshot.text}"
                     // current_snapshot_version = sh(
                     //     script: "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".stripIndent(),
                     //     returnStatus: true)
