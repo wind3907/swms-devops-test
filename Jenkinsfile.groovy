@@ -54,45 +54,36 @@ pipeline {
                 echo "test ${params.SOURCE_DB}"
             }
         }
-        // stage('Create AWS RDS snapshot') {
-        //     steps {
-        //         echo "Section: Create AWS RDS snapshot"
-        //         script{
-        //             env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
-        //             env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
-        //             sh(
-        //                 script: '''
-        //                     aws rds create-db-snapshot \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                     aws rds wait db-snapshot-available \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                 '''.stripIndent(),
-        //                 returnStatus: true)
-        //         }
-        //     }
-        // }
+        stage('Create AWS RDS snapshot') {
+            steps {
+                echo "Section: Create AWS RDS snapshot"
+                script{
+                    env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
+                    env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
+                    sh(
+                        script: '''
+                            aws rds create-db-snapshot \
+                                --db-instance-identifier $RDS_INSTANCE \
+                                --db-snapshot-identifier $SNAPSHOT_NAME
+                            aws rds wait db-snapshot-available \
+                                --db-instance-identifier $RDS_INSTANCE \
+                                --db-snapshot-identifier $SNAPSHOT_NAME
+                        '''.stripIndent(),
+                        returnStatus: true)
+                }
+            }
+        }
         stage('Cleaning Older RDS snapshot') {
             steps {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
-                    CURRENT_SNAPSHOT = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -",returnStdout: true)
-                    echo "$CURRENT_SNAPSHOT"
-                    sh "aws rds delete-db-snapshot --db-snapshot-identifier ${CURRENT_SNAPSHOT}"
-                    // try{
-                    //     CURRENT_SNAPSHOT = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -",returnStdout: true)
-                    //     sh(
-                    //     script: '''
-                    //         aws rds delete-db-snapshot \
-                    //             --db-snapshot-identifier $CURRENT_SNAPSHOT
-                    //     '''.stripIndent(),
-                    //     returnStatus: true)
-                    //     sh(script: '''echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version''')
-                    // }catch(e){
-                    //     sh(script: '''echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version''')
-                    
-                    // }
+                    try{
+                        CURRENT_SNAPSHOT = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -",returnStdout: true)
+                        sh "aws rds delete-db-snapshot --db-snapshot-identifier ${CURRENT_SNAPSHOT}"
+                        echo "$SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version"
+                    }catch(e){
+                        echo "$SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version"
+                    }
                 }
             }
         }
