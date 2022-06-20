@@ -54,50 +54,54 @@ pipeline {
                 echo "test ${params.SOURCE_DB}"
             }
         }
-        stage('Create AWS RDS snapshot') {
-            steps {
-                echo "Section: Create AWS RDS snapshot"
-                script{
-                    env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
-                    env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
-                    // sh(
-                    //     script: '''
-                    //         aws rds create-db-snapshot \
-                    //             --db-instance-identifier $RDS_INSTANCE \
-                    //             --db-snapshot-identifier $SNAPSHOT_NAME
-                    //         aws rds wait db-snapshot-available \
-                    //             --db-instance-identifier $RDS_INSTANCE \
-                    //             --db-snapshot-identifier $SNAPSHOT_NAME
-                    //     '''.stripIndent(),
-                    //     returnStatus: true)
-                }
-            }
-        }
+        // stage('Create AWS RDS snapshot') {
+        //     steps {
+        //         echo "Section: Create AWS RDS snapshot"
+        //         script{
+        //             env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
+        //             env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
+        //             sh(
+        //                 script: '''
+        //                     aws rds create-db-snapshot \
+        //                         --db-instance-identifier $RDS_INSTANCE \
+        //                         --db-snapshot-identifier $SNAPSHOT_NAME
+        //                     aws rds wait db-snapshot-available \
+        //                         --db-instance-identifier $RDS_INSTANCE \
+        //                         --db-snapshot-identifier $SNAPSHOT_NAME
+        //                 '''.stripIndent(),
+        //                 returnStatus: true)
+        //         }
+        //     }
+        // }
         stage('Cleaning Older RDS snapshot') {
             steps {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
+                    current_snapshot_version = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -".stripIndent(),returnStatus: true)
+                    if(current_snapshot_version){
+                        echo "$current_snapshot_version"
+                    }else{
+                        echo "No Snapshot"
+                    }
                     // sh(script: "echo '$DATE_TIME'", returnStdout: true)
                     // def old_snapshot = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
                     
-                    sh(script: '''echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version''')
+                    // sh(script: '''echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version''')
                     // echo "Output: ${old_snapshot.text}"
-                    // current_snapshot_version = sh(
-                    //     script: "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".stripIndent(),
-                    //     returnStatus: true)
+                    
                     // echo "Output: ${current_snapshot_version}"
                 }
             }
         }
-        stage('Test name') {
-            steps {
-                echo "Section: Test name"
-                script{
-                    echo "Date: ${env.DATE_TIME}"
-                    echo "NAME: ${env.SNAPSHOT_NAME}"
-                }
-            }
-        }
+        // stage('Test name') {
+        //     steps {
+        //         echo "Section: Test name"
+        //         script{
+        //             echo "Date: ${env.DATE_TIME}"
+        //             echo "NAME: ${env.SNAPSHOT_NAME}"
+        //         }
+        //     }
+        // }
         // stage('Verifying parameters') {
         //     steps {
         //         echo "Section: Verifying parameters"
