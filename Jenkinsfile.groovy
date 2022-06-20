@@ -85,7 +85,7 @@ pipeline {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
                     current_snapshot_id = sh(
-                        script: "aws s3api put-object --bucket swms-data-migration --key snapshot.version --body ${WORKSPACE}/snapshot.version".stripIndent(),
+                        script: "aws s3api put-object --bucket swms-data-migration --key ${TARGET_SERVER}/snapshot.version --body ${WORKSPACE}/snapshot.version".stripIndent(),
                         returnStatus: true)
                     echo "Output: ${current_snapshot_id}"
                 }
