@@ -79,12 +79,7 @@ pipeline {
                 script{
                     CURRENT_SNAPSHOT = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -",returnStdout: true)
                     echo "$CURRENT_SNAPSHOT"
-                        // sh(
-                        // script: '''
-                        //     aws rds delete-db-snapshot \
-                        //         --db-snapshot-identifier $CURRENT_SNAPSHOT
-                        // '''.stripIndent(),
-                        // returnStdout: true)
+                    sh "aws rds delete-db-snapshot --db-snapshot-identifier ${CURRENT_SNAPSHOT}"
                     // try{
                     //     CURRENT_SNAPSHOT = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -",returnStdout: true)
                     //     sh(
