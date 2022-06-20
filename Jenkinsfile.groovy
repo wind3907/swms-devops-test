@@ -93,9 +93,10 @@ pipeline {
                             export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
                             export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
                             export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
-                            aws s3api put-object --bucket swms-data-migration --key snapshot.version --body ${WORKSPACE}/snapshot.version
+                            aws s3api put-object --bucket swms-data-migration --key snapshot.version
                         '''.stripIndent(),
                         returnStatus: true)
+                    echo "Output: ${current_snapshot_id}"
                 }
             }
         }
