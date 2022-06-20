@@ -103,8 +103,8 @@ pipeline {
             steps {
                 echo "Section: Test name"
                 script{
-                    echo "Output: ${DATE_TIME}"
-                    echo "Output: ${SNAPSHOT_NAME}"
+                    echo "Output: ${env.DATE_TIME}"
+                    echo "Output: ${env.SNAPSHOT_NAME}"
                 }
             }
         }
