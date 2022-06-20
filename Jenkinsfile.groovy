@@ -85,11 +85,7 @@ pipeline {
                 echo "Section: Cleaning Older RDS snapshot"
                 // return process.text
                 script{
-                    sh(script: '''
-                        export DATE_TIME=$(date +'%m-%d-%Y-%H-%M')
-                        export SNAPSHOT_NAME="before-data-migration-$DATE_TIME"
-                    ''',
-                    returnStdout: true)
+                    env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
                     def process = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
                     echo "Output: ${process.text}"
                     // current_snapshot_version = sh(
@@ -103,9 +99,7 @@ pipeline {
             steps {
                 echo "Section: Test name"
                 script{
-                    sh(script: '''
-                        echo "data: $DATE_TIME"
-                    ''')
+                    echo "Date: ${env.DATE_TIME}"
                 }
             }
         }
