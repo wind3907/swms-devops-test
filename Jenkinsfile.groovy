@@ -90,7 +90,6 @@ pipeline {
                         export SNAPSHOT_NAME="before-data-migration-$DATE_TIME"
                     ''',
                     returnStdout: true)
-                    echo "data: ${DATE_TIME}"
                     def process = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
                     echo "Output: ${process.text}"
                     // current_snapshot_version = sh(
