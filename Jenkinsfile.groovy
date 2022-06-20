@@ -80,7 +80,7 @@ pipeline {
                     // sh(script: "echo '$DATE_TIME'", returnStdout: true)
                     // def old_snapshot = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
                     
-                    sh "echo ${env.SNAPSHOT_NAME} | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version"
+                    sh(script: "echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version")
                     // echo "Output: ${old_snapshot.text}"
                     // current_snapshot_version = sh(
                     //     script: "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".stripIndent(),
