@@ -82,6 +82,7 @@ pipeline {
                         echo "$current_snapshot_version"
                     }else{
                         echo "No Snapshot"
+                        echo "$current_snapshot_version"
                     }
                     // sh(script: "echo '$DATE_TIME'", returnStdout: true)
                     // def old_snapshot = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
