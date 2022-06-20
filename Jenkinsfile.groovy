@@ -77,12 +77,10 @@ pipeline {
             steps {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
-                    current_snapshot_version = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -".stripIndent(),returnStdout: true)
-                    if(current_snapshot_version){
-                        echo "$current_snapshot_version"
-                    }else{
-                        echo "No Snapshot"
-                        echo "$current_snapshot_version"
+                    try{
+                        current_snapshot_version = sh(script: "aws s3 cp s3://swms-data-migration/${TARGET_SERVER}/snapshot.version -".stripIndent(),returnStdout: true)
+                    }catch(e){
+                        echo "No Snapshots found"
                     }
                     // sh(script: "echo '$DATE_TIME'", returnStdout: true)
                     // def old_snapshot = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
