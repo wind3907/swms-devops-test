@@ -85,16 +85,7 @@ pipeline {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
                     current_snapshot_id = sh(
-                        script: '''
-                            set +x
-                            aws_creds="$(aws sts assume-role --role-arn "${S3_ACCESS_ARN}" \
-                                                    --role-session-name "${AWS_ROLE_SESSION_NAME}" \
-                                                    --duration-seconds 900 | jq --raw-output '.Credentials')"
-                            export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
-                            export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
-                            export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
-                            aws s3api put-object --bucket swms-data-migration --key snapshot.version
-                        '''.stripIndent(),
+                        script: "aws s3api put-object --bucket swms-data-migration --key snapshot.version --body ${WORKSPACE}/snapshot.version".stripIndent(),
                         returnStatus: true)
                     echo "Output: ${current_snapshot_id}"
                 }
