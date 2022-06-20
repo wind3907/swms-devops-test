@@ -87,7 +87,7 @@ pipeline {
                 script{
                     env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
                     env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
-                    sh(script: "$DATE_TIME", returnStdout: true)
+                    sh(script: "echo '$DATE_TIME'", returnStdout: true)
                     def process = "aws s3 cp --quiet s3://swms-data-migration/${TARGET_SERVER}/snapshot.version /dev/stdout".execute()
                     echo "Output: ${process.text}"
                     // current_snapshot_version = sh(
