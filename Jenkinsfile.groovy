@@ -43,8 +43,9 @@ pipeline {
     agent { label 'master' }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        S3_ACCESS_ARN="arn:aws:iam::546397704060:role/jenkins_swms_build_automation";
-        AWS_ROLE_SESSION_NAME="data-migration-create-snapshot"
+        S3_ACCESS_ARN="arn:aws:iam::546397704060:role/ec2_s3_role";
+        AWS_ROLE_SESSION_NAME="swms-data-migration";
+        RDS_INSTANCE="${params.TARGET_SERVER}-db"
     }
     stages {
         stage('Verifying parameters') {
@@ -53,19 +54,49 @@ pipeline {
                 echo "test ${params.SOURCE_DB}"
             }
         }
-        stage('Create AWS RDS snapshot') {
+        // stage('Create AWS RDS snapshot') {
+        //     steps {
+        //         echo "Section: Create AWS RDS snapshot"
+        //         script{
+        //             sh(
+        //                 script: '''
+        //                     set +x
+        //                     aws_creds="$(aws sts assume-role --role-arn "${S3_ACCESS_ARN}" \
+        //                                             --role-session-name "${AWS_ROLE_SESSION_NAME}" \
+        //                                             --duration-seconds 900 | jq --raw-output '.Credentials')"
+        //                     export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
+        //                     export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
+        //                     export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
+        //                     export DATE_TIME=$(date +'%m-%d-%Y-%H-%M')
+        //                     export SNAPSHOT_NAME="before-data-migration-$DATE_TIME"
+        //                     aws rds create-db-snapshot \
+        //                         --db-instance-identifier $RDS_INSTANCE \
+        //                         --db-snapshot-identifier $SNAPSHOT_NAME
+        //                     aws rds wait db-snapshot-available \
+        //                         --db-instance-identifier $RDS_INSTANCE \
+        //                         --db-snapshot-identifier $SNAPSHOT_NAME
+        //                 '''.stripIndent(),
+        //                 returnStatus: true)
+        //         }
+        //     }
+        // }
+        stage('Cleaning Older RDS snapshot') {
             steps {
-                echo "Section: Create AWS RDS snapshot"
-                sh"""
-                    set +x
-                    aws_creds="$(aws sts assume-role --role-arn "${S3_ACCESS_ARN}" \
-                                            --role-session-name "${AWS_ROLE_SESSION_NAME}" \
-                                            --duration-seconds 900 | jq --raw-output '.Credentials')"
-                    export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
-                    export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
-                    export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
-                    aws ec2 describe-instances --region us-east-1
-                """
+                echo "Section: Cleaning Older RDS snapshot"
+                script{
+                    current_snapshot_id = sh(
+                        script: '''
+                            set +x
+                            aws_creds="$(aws sts assume-role --role-arn "${S3_ACCESS_ARN}" \
+                                                    --role-session-name "${AWS_ROLE_SESSION_NAME}" \
+                                                    --duration-seconds 900 | jq --raw-output '.Credentials')"
+                            export AWS_ACCESS_KEY_ID="$(echo $aws_creds | jq --raw-output '.AccessKeyId')";
+                            export AWS_SECRET_ACCESS_KEY="$(echo $aws_creds | jq --raw-output '.SecretAccessKey')";
+                            export AWS_SESSION_TOKEN="$(echo $aws_creds | jq --raw-output '.SessionToken')";   
+                            aws s3api put-object --bucket swms-data-migration --key snapshot.version --body ${WORKSPACE}/snapshot.version
+                        '''.stripIndent(),
+                        returnStatus: true)
+                }
             }
         }
         // stage('Verifying parameters') {
