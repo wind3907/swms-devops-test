@@ -88,8 +88,8 @@ pipeline {
                     try{
                         // if(env.SNAPSHOT_CREATED == 'true'){
                             CURRENT_SNAPSHOT = sh(script: '''aws s3 cp s3://swms-data-migration/$TARGET_SERVER/snapshot.version -''',returnStdout: true)
-                            echo $CURRENT_SNAPSHOT
-                            sh(script: '''aws rds delete-db-snapshot --db-snapshot-identifier $CURRENT_SNAPSHOT''')
+                            echo "${CURRENT_SNAPSHOT}"
+                            // sh(script: '''aws rds delete-db-snapshot --db-snapshot-identifier $CURRENT_SNAPSHOT''')
                             
                             // sh(script: '''echo $SNAPSHOT_NAME | aws s3 cp - s3://swms-data-migration/${TARGET_SERVER}/snapshot.version''')
                         // }else{
