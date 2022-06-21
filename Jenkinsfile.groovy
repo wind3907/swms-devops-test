@@ -85,7 +85,7 @@ pipeline {
             steps {
                 echo "Section: Cleaning Older RDS snapshot"
                 script{
-                    rootPassword = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 | jq --raw-output 'SecretString' ''',returnStdout: true)
+                    rootPassword = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 | jq --raw-output '.SecretString' ''',returnStdout: true)
                     echo "${rootPassword}"
                 }
             }
