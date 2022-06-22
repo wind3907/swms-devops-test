@@ -1,2 +1,1 @@
-TARGETDB=$1
-ROOTPW=$2
+echo "hi"
