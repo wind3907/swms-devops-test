@@ -1,4 +1,4 @@
-. /usr/lpp/oracle/.profile.19c
+# . /usr/lpp/oracle/.profile.19c
 
 TARGETDB=$1
 ROOTPW=$2
