@@ -9,9 +9,7 @@ exit
 EOF`
 
 echo $result
-
-
-result="asdasdasdasd Connected asdasdd"                                                                                                  
+                                                                                              
 if echo $result | grep -q "Connected"                                                                                                    
     then echo 'Connected Successfulyy'                                                                                                            
     else exit 1                                                                                                                          
