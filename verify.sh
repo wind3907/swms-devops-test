@@ -1,11 +1,11 @@
-# . /usr/lpp/oracle/.profile.19c
+. /usr/lpp/oracle/.profile.19c
 
 TARGETDB=$1
 ROOTPW=$2
 
 echo "Hiii"
-echo $TARGETDB
-echo $ROOTPW
+echo "${TARGETDB}"
+echo "${ROOTPW}"
 
 # export ORACLE_SID=swms_ci1
 # export TNS_ADMIN=/home2/dba/jcx/11gtords
