@@ -60,7 +60,7 @@ pipeline {
                 echo "Testing RDS Connection"
                 script{
                     env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    env.TARGETDB = 'lx739q1'
+                    env.TARGETDB = 'lx739q13'
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
                         scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
