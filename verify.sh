@@ -1,4 +1,4 @@
-#!/bin/bash
+. /etc/profile
 
 TARGETDB=$1
 ROOTPW=$2
