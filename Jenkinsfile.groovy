@@ -88,7 +88,7 @@ pipeline {
                     rootPassword = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 | jq --raw-output '.SecretString' ''',returnStdout: true)
                     echo "$rootPassword"
                     sh """
-                        ${WORKSPACE}/verify.sh 'lx739q13-db.swms-np.us-east-1.aws.sysco.net' ${rootPassword}
+                        ${WORKSPACE}/verify.sh
                     """
                 }
             }
