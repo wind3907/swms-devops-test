@@ -86,7 +86,7 @@ pipeline {
                 echo "Testing RDS Connection"
                 script{
                     ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 | jq --raw-output '.SecretString' ''',returnStdout: true)
-                    sh """${WORKSPACE}/verify.sh"""
+                    sh "${WORKSPACE}/verify.sh"
                 }
             }
         }
