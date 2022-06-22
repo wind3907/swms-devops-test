@@ -77,15 +77,15 @@ pipeline {
         //         """
         //     }
         // }
-        success {
-            script {
-                echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
-            }
+    success {
+        script {
+            echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
         }
-        failure {
-            script {
-                echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is failed!'
-            }
+    }
+    failure {
+        script {
+            echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is failed!'
         }
     }
 }
+
