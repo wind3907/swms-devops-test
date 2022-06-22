@@ -3,7 +3,7 @@ properties(
         buildDiscarder(logRotator(numToKeepStr: '20')),
         parameters(
             [
-                string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e'),
+                // string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e'),
                 // string(name: 'TARGET_DB', defaultValue: 'rds_trn_xxx', description: 'Target Database. eg: rds_trn_040'),
                 // string(name: 'ROOT_PW', defaultValue: 'SwmsRoot123', description: 'Root Password'),
                 // string(name: 'TARGET_SERVER', defaultValue: 'lxxxxtrn', description: 'Host ec2 instance. eg: lx036trn'),
