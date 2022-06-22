@@ -1,9 +1,5 @@
 TARGETDB=$1
-ROOTPW='ZXCK>MW*$uo%B6t?'
-
-echo "Hiii"
-echo "${TARGETDB}"
-echo "${ROOTPW}"
+ROOTPW=$2
 
 export ORACLE_SID=swms_ci1
 export TNS_ADMIN=/home2/dba/jcx/11gtords
