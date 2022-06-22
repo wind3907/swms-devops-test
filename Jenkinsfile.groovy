@@ -48,264 +48,30 @@ pipeline {
         RDS_INSTANCE="${params.TARGET_SERVER}-db"
     }
     stages {
-        // stage('Verifying parameters') {
-        //     steps {
-        //         echo "Section: Verifying parameters"
-        //         echo "test ${params.SOURCE_DB}"
-        //     }
-        // }
-        // stage('Create AWS RDS snapshot') {
-        //     steps {
-        //         echo "Section: Create AWS RDS snapshot"
-        //         script{
-        //             env.DATE_TIME = sh(script: "date +'%m-%d-%Y-%H-%M'", returnStdout: true)
-        //             env.SNAPSHOT_NAME = "before-data-migration-$DATE_TIME"
-        //             try{
-        //                 sh(
-        //                 script: '''
-        //                     aws rds create-db-snapshot \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                     aws rds wait db-snapshot-available \
-        //                         --db-instance-identifier $RDS_INSTANCE \
-        //                         --db-snapshot-identifier $SNAPSHOT_NAME
-        //                 '''.stripIndent(),
-        //                 returnStatus: true)
-        //                 echo "Snapshot Created Successfully!"
-        //                 env.SNAPSHOT_CREATED = 'true'
-        //             }catch(e){
-        //                 echo "Snapshot creation failed: ${e}"
-        //                 env.SNAPSHOT_CREATED = 'false'
-        //             }
-                    
-        //         }
-        //     }
-        // }
         stage('Testing RDS Connection') {
             steps {
                 echo "Testing RDS Connection"
                 script{
                     ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    echo "$ROOTPW"
                     TARGETDB='lx739q13'
-                    sh "${WORKSPACE}/verify.sh"
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
+                        scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
+                    """
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                        . ~/.profile;
+                        beoracle_ci /tempfs/terraform/verify.sh $TARGETDB $ROOTPW
+                    """
                 }
             }
         }
-        // stage('Test name') {
-        //     steps {
-        //         echo "Section: Test name"
-        //         script{
-        //             echo "Date: ${env.DATE_TIME}"
-        //             echo "NAME: ${env.SNAPSHOT_NAME}"
-        //         }
-        //     }
-        // }
-        // stage('Verifying parameters') {
-        //     steps {
-        //         echo "Section: Verifying parameters"
-        //         sh """
-        //             echo "Source DB: ${params.SOURCE_DB}"
-        //             echo "Target DB: ${params.TARGET_DB}"
-        //             if [ "`echo ${params.SOURCE_DB} | cut -c6`" = "e" ]; then
-        //             echo Good This is E box ${params.SOURCE_DB}
-        //             else
-        //             echo Error: Please use rsxxxe
-        //             exit
-        //             fi 
-        //         """
-        //     }
-        // }
-        // stage('Copying Scripts') {
-        //     when {
-        //         expression { 
-        //             params.SOURCE_DB.getAt(5) == 'e' && params.TARGET_DB.substring(0,2) == 'lx' && params.TARGET_DB.substring(5,8) == 'trn' 
-        //         }
-        //     }
-        //     steps {
-        //         echo "Section: Copying Scripts"
-        //         sh '${WORKSPACE}/scripts/copying_scripts.sh'
-        //     }
-        // }
-        // stage('Restore 11g db') {
-        //     steps {
-        //         echo "Section: Restore 11g db,prepare db export and get db export"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/restore11g.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Prepare db export to RDS') {
-        //     steps {
-        //         echo "Section: Restore 11g db,prepare db export and get db export"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/prepare_export2rds.sh
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Start db export to RDS') {
-        //     steps {
-        //         echo "Section: Restore 11g db,prepare db export and get db export"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/start_export2rds.sh
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Prepare db import to RDS') {
-        //     steps {
-        //         echo "Section: Prepare db import to RDS"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/prepare_import2rds.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Start db import to RDS') {
-        //     steps {
-        //         echo "Section: Start db import to RDS"
-        //         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-        //             sh """
-        //                 ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //                 . ~/.profile;
-        //                 beoracle_ci /tempfs/11gtords/start_import2rds.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //                 "
-        //             """
-        //         }
-        //     }
-        // }
-        // stage('Verify') {
-        //     steps {
-        //         echo "Section: Verify"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/verify.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Execute 45 Script') {
-        //     steps {
-        //         echo "Section: Execute 45 Script"
-        //         sh """
-        //             scp -i $SSH_KEY ${WORKSPACE}/scripts/all_target_45_2.sh ${SSH_KEY_USR}@${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net:/tempfs/
-        //         """
-        //         timeout(time: 3, unit: 'MINUTES') {
-        //             sh """
-        //                 ssh -i $SSH_KEY ${SSH_KEY_USR}@${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net "
-        //                 /ts/curr/bin/beswms_ci cp /tempfs/all_target_45_2.sh /swms/curr/schemas/;
-        //                 /ts/curr/bin/beswms_ci /swms/curr/schemas/all_target_45_2.sh swms swms;
-        //                 "
-        //             """
-        //         }       
-        //     }
-        // }
-        // stage("Trigger deployment") {
-        //     steps {
-        //         script {
-        //             try {
-        //                 build job: "${DEPLOY_PIPELINE_NAME}", parameters: [
-        //                     string(name: 'target_server_name', value: "${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net"),
-        //                     string(name: 'artifact_s3_bucket', value: "${params.S3_BUCKET_NAME}"),
-        //                     string(name: 'platform', value: "${params.PLATFORM}"),
-        //                     string(name: 'artifact_version', value: "${params.SWMS_VERSION}"),
-        //                     string(name: 'artifact_name', value: "${params.S3_ARTIFACT_NAME}"),
-        //                     string(name: 'dba_masterfile_names', value: "${params.PRIV_MASTER_SCRIPT_FILES}"),
-        //                     string(name: 'master_file_retry_count', value: "${params.MASTER_FILE_RETRY_COUNT}")
-        //                 ]
-        //                 env.DEPLOY_STATUS = "SUCCESSFUL"
-        //             } catch (e) {
-        //                 env.DEPLOY_STATUS = "FAILED"
-        //                 throw e
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('RDS Configurations') {
-        //     steps {
-        //         echo "Section: RDS Configurations"
-        //         dir("swms-opco")
-        //         {
-        //             git branch: 'develop',
-        //             credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
-        //             url: 'git@github.com:SyscoCorporation/swms-opco.git'
-        //         }
-        //         sh 'scp -i $SSH_KEY ${WORKSPACE}/swms-opco/configuration/rds/queues/* ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/home2/dba/jcx/11gtords/rdsconfig/'
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/rds_configurations.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """           
-        //     }
-        // }
-        // stage('Reset Hash Password') {
-        //     steps {
-        //         echo "Section: Reset Hash Password"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/reset_hashpw.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """           
-        //     }
-        // }
-        // stage('Alter USER SWMS') {
-        //     steps {
-        //         echo "Section: Alter USER SWMS"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/alter_user.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-        // stage('Reset network ACLs on RDS') {
-        //     steps {
-        //         echo "Section: Reset network ACLs on RDS"
-        //         script {
-        //             def HOST_IP = sh(script: "dig +short ${params.TARGET_SERVER}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
-        //             sh """
-        //                 ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //                 . ~/.profile;
-        //                 beoracle_ci /tempfs/11gtords/reset_network_acls.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz' ${HOST_IP}
-        //                 "
-        //             """
-        //         }
-        //     }
-        // }
-        // stage('Update sys_config') {
-        //     steps {
-        //         echo "Section: Update sys_config"
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci /tempfs/11gtords/update_sysconfig.sh ${params.SOURCE_DB} ${params.TARGET_DB} ${params.ROOT_PW} '/tempfs/DBBackup/SWMS/swm1_db_${params.SOURCE_DB}*.tar.gz'
-        //             "
-        //         """
-        //     }
-        // }
-    }
-    post {
         // always {
         //     script {
-        //         logParser projectRulePath: "${WORKSPACE}/log_parse_rules" , useProjectRule: true
         //         sh """
         //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
         //             . ~/.profile;
-        //             beoracle_ci rm -r /tempfs/11gtords/
+        //             beoracle_ci rm -r /tempfs/terraform/
         //             "
         //         """
         //     }
