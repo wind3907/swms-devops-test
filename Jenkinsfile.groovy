@@ -87,11 +87,11 @@ pipeline {
                 script{
                     ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 | jq --raw-output '.SecretString' ''',returnStdout: true)
                     TARGETDB='lx739q13'
-                    sh '''
-                        sqlplus 'root/'"$ROOTPW"'@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST='"$TARGETDB"'-db.swms-np.us-east-1.aws.sysco.net)(PORT='1521'))(CONNECT_DATA=(SID='SWM1')))'  << EOF
+                    sh """
+                        sqlplus 'root/$ROOTPW@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$TARGETDB-db.swms-np.us-east-1.aws.sysco.net)(PORT='1521'))(CONNECT_DATA=(SID='SWM1')))'  << EOF
                         exit
                         EOF
-                    '''
+                    """
                 }
             }
         }
