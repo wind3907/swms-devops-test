@@ -3,6 +3,7 @@
 TARGETDB=$1
 ROOTPW=$2
 
+echo "Hiii"
 echo $TARGETDB
 echo $ROOTPW
 
