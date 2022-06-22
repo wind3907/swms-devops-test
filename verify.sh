@@ -10,3 +10,10 @@ EOF`
 
 echo $result
 
+if [ echo $result | grep Connected == "Connected" ]
+then
+    echo 'Connecteddddd'
+else
+    echo 'sqlplus failed! Invalid username/password.'
+fi
+
