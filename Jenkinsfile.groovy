@@ -48,6 +48,13 @@ pipeline {
         RDS_INSTANCE="${params.TARGET_SERVER}-db"
     }
     stages {
+        stage('Checkout SCM') {
+            steps {
+                cleanWs()
+                checkout scm
+                echo "Building ${env.JOB_NAME}..."
+            }
+        }
         stage('Testing RDS Connection') {
             steps {
                 echo "Testing RDS Connection"
