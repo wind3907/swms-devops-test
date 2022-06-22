@@ -9,12 +9,11 @@ exit
 EOF`
 
 echo $result
-# connected = echo $result
 
-# if [ "echo $result | grep Connected" == $result ]
-# then
-#     echo 'Connecteddddd'
-# else
-#     echo 'sqlplus failed! Invalid username/password.'
-# fi
+
+result="asdasdasdasd Connected asdasdd"                                                                                                  
+if echo $result | grep -q "Connected"                                                                                                    
+    then echo 'Connected Successfulyy'                                                                                                            
+    else exit 1                                                                                                                          
+fi  
 
