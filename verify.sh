@@ -1,7 +1,6 @@
 TARGETDB=$1
 ROOTPW=$2
 
-export ORACLE_SID=swms_ci1
-sqlplus root/$ROOTPW@$TARGETDB:1521 << EOF
-
+sqlplus root/$ROOTPW@$TARGETDB:1521/SWM1 << EOF
+exit
 EOF
