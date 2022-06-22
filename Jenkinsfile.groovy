@@ -66,12 +66,7 @@ pipeline {
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
                         scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
                     """
-                    sh '''
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                        . ~/.profile;
-                        /tempfs/terraform/verify.sh '$TARGETDB' '$ROOTPW'
-                        "
-                    '''
+                    sh 'ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; /tempfs/terraform/verify.sh ${TARGETDB} ${ROOTPW}"'
                 }
             }
         }
