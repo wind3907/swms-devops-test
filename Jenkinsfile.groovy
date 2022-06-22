@@ -1,9 +1,9 @@
 properties(
     [
         buildDiscarder(logRotator(numToKeepStr: '20')),
-        // parameters(
-        //     [
-                // string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e'),
+        parameters(
+            [
+                string(name: 'SOURCE_DB', defaultValue: 'rsxxxe', description: 'Source Database. eg: rs040e'),
                 // string(name: 'TARGET_DB', defaultValue: 'rds_trn_xxx', description: 'Target Database. eg: rds_trn_040'),
                 // string(name: 'ROOT_PW', defaultValue: 'SwmsRoot123', description: 'Root Password'),
                 // string(name: 'TARGET_SERVER', defaultValue: 'lxxxxtrn', description: 'Host ec2 instance. eg: lx036trn'),
@@ -35,8 +35,8 @@ properties(
                 // string(name: 'dba_masterfile_names', description: 'The name of the artifact to deploy', defaultValue: 'R50_0_dba_master.sql', trim: true),
                 // string(name: 'master_file_retry_count', description: 'Amount of attempts to apply the master file. This is setup to handle circular dependencies by running the same master file multiple times.', defaultValue: '3', trim: true),
                 // separator(name: "test", sectionHeader: "Data Migration Parameters", separatorStyle: "border-color: orange;", separatorHeaderStyle: "font-weight: bold; line-height: 1.5em; font-size: 1.5em;")
-        //     ]
-        // )
+            ]
+        )
     ]
 )
 pipeline {
@@ -60,8 +60,7 @@ pipeline {
                 echo "Testing RDS Connection"
                 script{
                     env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q13 --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    env.TARGETDB='lx739q13'
-                    echo "${ROOTPW}"
+                    env.TARGETDB = 'lx739q13'
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
                         scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
@@ -76,17 +75,18 @@ pipeline {
             }
         }
     }
-        // always {
-        //     script {
-        //         sh """
-        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-        //             . ~/.profile;
-        //             beoracle_ci rm -r /tempfs/terraform/
-        //             "
-        //         """
-        //     }
-        // }
+        
     post {
+        always {
+            script {
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci rm -r /tempfs/terraform/
+                    "
+                """
+            }
+        }
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
