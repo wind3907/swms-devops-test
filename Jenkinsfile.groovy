@@ -68,7 +68,7 @@ pipeline {
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile;
-                        /tempfs/terraform/verify.sh 'lx739q13' 'ZXCK>MW*\$uo%B6t?'
+                        /tempfs/terraform/verify.sh 'lx739q13' '$ROOTPW'
                         "
                     """
                 }
