@@ -61,8 +61,11 @@ pipeline {
                 script{
                     sh """
                         mkdir -p ${WORKSPACE}/.kitchen
-                        cat "Testline1 " >  ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
-                        cat "Testline2 " >>  ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
+                        cat <<EOF > ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
+                        first line
+                        second line
+                        third line
+                        EOF
                         aws s3 cp --recursive ${WORKSPACE}/.kitchen s3://${S3_BUCKET}/chef_state_files/lx739q14
                     """
                 }
