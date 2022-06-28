@@ -46,6 +46,7 @@ pipeline {
         S3_ACCESS_ARN="arn:aws:iam::546397704060:role/ec2_s3_role";
         AWS_ROLE_SESSION_NAME="swms-data-migration";
         RDS_INSTANCE="${params.TARGET_SERVER}-db"
+        S3_BUCKET="swms-jenkins-chef-ci"
     }
     stages {
         stage('Checkout SCM') {
@@ -55,39 +56,35 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage('Testing RDS Connection') {
+        stage('Copy Chef Resources to S3') {
+            when {
+                expression {
+                    params.TERRAFORM_COMMAND == 'create'
+                }
+            }
             steps {
-                echo "Testing RDS Connection"
                 script{
-                    env.TARGETDB = 'lx739q13'
-                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGETDB --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    
                     sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
-                        scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
+                        mkdir -p ${WORKSPACE}/.kitchen
+                        cat "Testline1 " >  ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
+                        cat "Testline2 " >>  ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
+                        aws s3 cp --recursive ${WORKSPACE}/.kitchen s3://${S3_BUCKET}/chef_state_files/lx739q14
                     """
-                    sh '''
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                        . ~/.profile; 
-                        /tempfs/terraform/verify.sh '${TARGETDB}' '${ROOTPW}'
-                        "
-                    '''
                 }
             }
         }
     }
-        
     post {
-        always {
-            script {
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci rm -r /tempfs/terraform/
-                    "
-                """
-            }
-        }
+        // always {
+        //     script {
+        //         sh """
+        //             ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+        //             . ~/.profile;
+        //             beoracle_ci rm -r /tempfs/terraform/
+        //             "
+        //         """
+        //     }
+        // }
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
