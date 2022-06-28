@@ -57,11 +57,6 @@ pipeline {
             }
         }
         stage('Copy Chef Resources to S3') {
-            when {
-                expression {
-                    params.TERRAFORM_COMMAND == 'create'
-                }
-            }
             steps {
                 script{
                     sh """
