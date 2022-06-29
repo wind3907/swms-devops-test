@@ -18,12 +18,9 @@ pipeline {
         stage('Testing RDS Connection') {
             steps {
                 echo "Testing RDS Connection"
-                script{
-                    env.TARGETDB = "lx739q17"
-                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGETDB --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    
+                script{    
                     sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@lx739q17.swms-np.us-east-1.aws.sysco.net
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@lx045trn.swms-np.us-east-1.aws.sysco.net
                     """
                 }
             }
