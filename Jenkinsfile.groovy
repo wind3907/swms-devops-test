@@ -66,7 +66,6 @@ pipeline {
                         second line
                         third line
                         EOF
-                        aws s3 cp --recursive ${WORKSPACE}/.kitchen s3://${S3_BUCKET}/chef_state_files/lx739q14
                     """
                 }
             }
