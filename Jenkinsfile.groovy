@@ -56,17 +56,28 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage('Copy Chef Resources to S3') {
+        stage('Testing RDS Connection') {
+            when {
+                expression {
+                    params.TERRAFORM_COMMAND == 'create'
+                }
+            }
             steps {
+                echo "Testing RDS Connection"
                 script{
+                    env.TARGETDB = "lx739q17"
+                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGETDB --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    
                     sh """
-                        mkdir -p ${WORKSPACE}/.kitchen
-                        cat <<EOF > ${WORKSPACE}/.kitchen/dev-client-rhel-7.yml
-                        first line
-                        second line
-                        third line
-                        EOF
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
+                        scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
                     """
+                    sh '''
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                        . ~/.profile; 
+                        /tempfs/terraform/verify.sh '${TARGETDB}' '${ROOTPW}'
+                        "
+                    '''
                 }
             }
         }
