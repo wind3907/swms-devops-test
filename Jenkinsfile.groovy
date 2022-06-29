@@ -57,11 +57,6 @@ pipeline {
             }
         }
         stage('Testing RDS Connection') {
-            when {
-                expression {
-                    params.TERRAFORM_COMMAND == 'create'
-                }
-            }
             steps {
                 echo "Testing RDS Connection"
                 script{
