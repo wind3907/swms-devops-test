@@ -28,7 +28,7 @@ pipeline {
                 sh '''
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/alter_user.sh '${params.TARGET_DB}' "$ROOT_PW"
+                    beoracle_ci /tempfs/11gtords/alter_user.sh "${params.TARGET_DB}" "$ROOT_PW"
                     "
                 '''
             }
