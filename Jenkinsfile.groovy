@@ -5,6 +5,7 @@ pipeline {
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
+        TARGET_DB = "${params.TARGET_DB}"
         // ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
     }
     stages {
@@ -18,7 +19,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.ROOT_PW = sh(script: '''aws secretsmanager get-secret-value --secret-id '/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}' | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    env.ROOT_PW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGET_DB | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
                 }
             }
         }
@@ -32,7 +33,7 @@ pipeline {
                 sh '''
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/terraform/alter_user.sh 'lx076trn' "$ROOT_PW"
+                    beoracle_ci /tempfs/terraform/alter_user.sh '${TARGET_DB}' '${ROOT_PW}'
                     "
                 '''
             }
