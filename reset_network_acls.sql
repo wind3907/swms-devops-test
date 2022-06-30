@@ -1,10 +1,6 @@
 DECLARE
 	v_swms_host_exists NUMBER := 0;
 	acl_count Number;
-	/*
-	* Short DNS doesn't work from remote DB instance.
-	* Route 53 Domain is too long for the config_flag_val column
-	*/
 	swms_host VARCHAR2(20) := '10.133.73.158';
 BEGIN
 	$if swms.platform.SWMS_REMOTE_DB $then
