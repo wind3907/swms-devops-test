@@ -3,11 +3,13 @@
 SOURCEDB=$1
 TARGETDB=$2
 ROOTPW=$3
-AIXDBBK=$4
-TARGETDB_IP=$5
+TARGETDB_IP=$4
+AIXDBBK=$5
+
 
 export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
+
 
 sqlplus root/$ROOTPW@$TARGETDB << EOF
 DECLARE
