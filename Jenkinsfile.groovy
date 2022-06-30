@@ -18,7 +18,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    chef_state = sh(script: 'aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content'',returnStdout: true)
+                    chef_state = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true)
                     echo "${chef_state}"
                 }
             }
