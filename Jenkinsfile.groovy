@@ -22,21 +22,15 @@ pipeline {
                 }
             }
         }
-        stage('Print') {
+        stage('Alter USER SWMS') {
             steps {
-                script{
-                    echo "$ROOT_PW"
-                    sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
-                        scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
-                    """
-                    sh '''
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                        . ~/.profile; 
-                        /tempfs/terraform/verify.sh '${TARGET_DB}' "$ROOT_PW"
-                        "
-                    '''
-                }
+                echo "Section: Alter USER SWMS"
+                sh '''
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/11gtords/alter_user.sh '${params.TARGET_DB}' "$ROOT_PW"
+                    "
+                '''
             }
         }
     }
