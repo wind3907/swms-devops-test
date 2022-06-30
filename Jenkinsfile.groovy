@@ -1,11 +1,10 @@
 pipeline {
-    agent { label 'terraform-slave' }
+    agent { label 'master' }
+    parameters {
+        string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
+    }
     environment {
-        SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        S3_ACCESS_ARN="arn:aws:iam::546397704060:role/ec2_s3_role";
-        AWS_ROLE_SESSION_NAME="swms-data-migration";
-        RDS_INSTANCE="${params.TARGET_SERVER}-db"
-        S3_BUCKET="swms-jenkins-chef-ci"
+        ROOT_PW = credentials('/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}')
     }
     stages {
         stage('Checkout SCM') {
@@ -18,14 +17,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.TARGETDB = "lx739q17"
-                    env.CHEF_STATE = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/$TARGETDB/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true).trim()
-                    sh (script: '''echo "---" > "${WORKSPACE}/dev-client-rhel-7.yml"''')
-                    sh (script: '''echo -e $CHEF_STATE | tr '"' "\n" >> "${WORKSPACE}/dev-client-rhel-7.yml"''')
-                    sh '''
-                    sed -i '/^$/d' "${WORKSPACE}/dev-client-rhel-7.yml"
-                    aws s3api put-object --bucket swms-jenkins-chef-ci --key chef_state_files/$TARGETDB/dev-client-rhel-7.yml --body "${WORKSPACE}/dev-client-rhel-7.yml"
-                    '''
+                    echo '$ROOT_PW'
                 }
             }
         }
