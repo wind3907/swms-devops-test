@@ -43,7 +43,7 @@ pipeline {
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile;
-                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB_ALIAS}' '${ROOT_PW}' '${AIX_DB_BK}' '${HOST_IP}'
+                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB_ALIAS}' '${ROOT_PW}' '${HOST_IP}' '${AIX_DB_BK}'
                         "
                     '''
                 }
