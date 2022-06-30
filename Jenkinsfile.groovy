@@ -26,9 +26,13 @@ pipeline {
             steps {
                 echo "Section: Alter USER SWMS"
                 sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
+                    scp -i $SSH_KEY ${WORKSPACE}/alter_user.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
+                """
+                sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/11gtords/alter_user.sh '${params.TARGET_DB}" "$ROOT_PW"
+                    beoracle_ci /tempfs/terraform/alter_user.sh '${params.TARGET_DB}" "$ROOT_PW"
                     "
                 """
             }
