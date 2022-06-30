@@ -17,7 +17,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    sh(script: 'echo $ROOTPW'.stripIndent(),returnStatus: true)
+                    sh(script: 'echo $ROOT_PW'.stripIndent(),returnStatus: true)
                 }
             }
         }
