@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        stage('Copy Chef Resources to S3') {
+        stage('Print') {
             steps {
                 script{
                     echo "$ROOT_PW"
