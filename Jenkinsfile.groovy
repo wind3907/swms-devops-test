@@ -4,7 +4,7 @@ pipeline {
         string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
     }
     environment {
-        ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
+        ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/lx076trn")
     }
     stages {
         stage('Checkout SCM') {
@@ -17,7 +17,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    sh(script: '''echo $ROOTPW'''.stripIndent(),returnStatus: true)
+                    sh(script: '''echo ${ROOTPW}'''.stripIndent(),returnStatus: true)
                 }
             }
         }
