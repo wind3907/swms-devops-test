@@ -28,19 +28,23 @@ pipeline {
                 }
             }
         }
-        stage('Alter USER SWMS') {
+        stage('Reset network ACLs on RDS') {
             steps {
-                echo "Section: Alter USER SWMS"
-                sh """
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
-                    scp -i $SSH_KEY ${WORKSPACE}/alter_user.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
-                """
-                sh '''
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    beoracle_ci /tempfs/terraform/alter_user.sh '${TARGET_DB_ALIAS}' '${ROOT_PW}'
-                    "
-                '''
+                echo "Section: Reset network ACLs on RDS"
+                script {
+                    def HOST_IP = sh(script: "dig +short ${params.TARGET_DB}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
+                    
+                    sh """
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
+                        scp -i $SSH_KEY ${WORKSPACE}/reset_network_acls.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
+                    """
+                    sh '''
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                        . ~/.profile;
+                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB}' '${ROOT_PW}' '${AIX_DB_BK}' '${HOST_IP}'
+                        "
+                    '''
+                }
             }
         }
         // stage('Print') {
