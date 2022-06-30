@@ -2,12 +2,12 @@ pipeline {
     agent { label 'master' }
     parameters {
         string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
+        string(name: 'ROOT_PW', defaultValue: 'lx076trn', description: 'TARGET DB')
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
         TARGET_DB = "${params.TARGET_DB}"
         TARGET_DB_ALIAS = "${params.TARGET_DB}_db"
-        // ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
     }
     stages {
         stage('Checkout SCM') {
@@ -20,7 +20,11 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.ROOT_PW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGET_DB | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    if ("${params.ROOT_PW}" != "" ){
+                        env.ROOT_PW = "${params.ROOT_PW}"
+                    }else{
+                        env.ROOT_PW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGET_DB | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    }
                 }
             }
         }
