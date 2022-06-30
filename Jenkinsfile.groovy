@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script{
                     CHEF_STATE = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true).trim()
-                    sh (script: 'echo -e $CHEF_STATE > "${WORKSPACE}/dev-client-rhel-7.yml"')
+                    sh (script: 'echo -e ${CHEF_STATE} > "${WORKSPACE}/dev-client-rhel-7.yml"')
                     sh '''
                     aws s3api put-object --bucket swms-jenkins-chef-ci --key chef_state_files/lx739q17/dev-client-rhel-7.yml --body "${WORKSPACE}/dev-client-rhel-7.yml"
                     '''
