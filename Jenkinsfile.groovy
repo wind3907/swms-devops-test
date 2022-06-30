@@ -6,6 +6,7 @@ pipeline {
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
         TARGET_DB = "${params.TARGET_DB}"
+        TARGET_DB_ALIAS = "${params.TARGET_DB}_db"
         // ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
     }
     stages {
@@ -33,7 +34,7 @@ pipeline {
                 sh '''
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/terraform/alter_user.sh '${TARGET_DB}' '${ROOT_PW}'
+                    beoracle_ci /tempfs/terraform/alter_user.sh '${TARGET_DB_ALIAS}' '${ROOT_PW}'
                     "
                 '''
             }
