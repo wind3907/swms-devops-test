@@ -18,9 +18,8 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    chef_state = sh(script: "aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate -",returnStdout: true)
-                    echo ${chef_state}
-                    // sh "aws s3 cp --recursive ${WORKSPACE}/.kitchen s3://${S3_BUCKET}/chef_state_files/lx${opco_num}${opco_type}"
+                    chef_state = sh(script: 'aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate -',returnStdout: true)
+                    echo "${chef_state}"
                 }
             }
         }
