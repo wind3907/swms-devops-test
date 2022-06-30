@@ -32,7 +32,7 @@ pipeline {
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile; 
-                        /tempfs/terraform/verify.sh '${TARGETDB}' '${ROOTPW}'
+                        /tempfs/terraform/verify.sh '${TARGET_DB}' '$ROOT_PW'
                         "
                     '''
                 }
