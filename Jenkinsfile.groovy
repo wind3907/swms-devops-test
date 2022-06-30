@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'master' }
+    agent { label 'terraform-slave' }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
         S3_ACCESS_ARN="arn:aws:iam::546397704060:role/ec2_s3_role";
@@ -15,13 +15,12 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage('Testing RDS Connection') {
+        stage('Copy Chef Resources to S3') {
             steps {
-                echo "Testing RDS Connection"
-                script{    
-                    sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@lx045trn.swms-np.us-east-1.aws.sysco.net
-                    """
+                script{
+                    chef_state = sh(script: "aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate -",returnStdout: true)
+                    echo ${chef_state}
+                    // sh "aws s3 cp --recursive ${WORKSPACE}/.kitchen s3://${S3_BUCKET}/chef_state_files/lx${opco_num}${opco_type}"
                 }
             }
         }
