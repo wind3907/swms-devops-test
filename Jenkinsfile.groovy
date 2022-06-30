@@ -18,7 +18,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.ROOT_PW = sh(script: """ aws secretsmanager get-secret-value --secret-id '/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}' | jq '.SecretString' """,returnStdout: true).tr(/"'/,/'"/)
+                    env.ROOT_PW = sh(script: """ aws secretsmanager get-secret-value --secret-id '/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}' | jq '.SecretString' """,returnStdout: true).replaceAll (/\"/,/\\\"/)
                 }
             }
         }
