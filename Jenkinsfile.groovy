@@ -25,7 +25,7 @@ pipeline {
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile; 
-                        /tempfs/swms-devops-test/verify.sh '${params.TARGETDB}' '$ROOT_PW'
+                        /tempfs/swms-devops-test/verify.sh '${params.TARGET_DB}' '$ROOT_PW'
                         "
                     """
                 }
