@@ -39,6 +39,7 @@ pipeline {
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
                         scp -i $SSH_KEY ${WORKSPACE}/reset_network_acls.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
+                        scp -i $SSH_KEY ${WORKSPACE}/reset_network_acls.sql ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/terraform/
                     """
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
