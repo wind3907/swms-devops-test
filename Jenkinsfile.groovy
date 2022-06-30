@@ -34,7 +34,7 @@ pipeline {
             steps {
                 echo "Section: Reset network ACLs on RDS"
                 script {
-                    def HOST_IP = sh(script: "dig +short ${params.TARGET_DB}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
+                    env.HOST_IP = sh(script: "dig +short ${params.TARGET_DB}.swms-np.us-east-1.aws.sysco.net | head -n 1", returnStdout: true)                   
                     
                     sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/terraform"
@@ -43,7 +43,7 @@ pipeline {
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile;
-                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB_ALIAS}' '${ROOT_PW}' '${AIX_DB_BK}' "${HOST_IP}"
+                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB_ALIAS}' '${ROOT_PW}' '${AIX_DB_BK}' '${HOST_IP}'
                         "
                     '''
                 }
