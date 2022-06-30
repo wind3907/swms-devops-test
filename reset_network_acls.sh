@@ -15,15 +15,10 @@ sqlplus root/$ROOTPW@$TARGETDB << EOF
 DECLARE
 	v_swms_host_exists NUMBER := 0;
 	acl_count Number;
-	/*
-	* Short DNS doesn't work from remote DB instance.
-	* Route 53 Domain is too long for the config_flag_val column
-	*/
 	swms_host VARCHAR2(20) := '$TARGETDB_IP';
 BEGIN
 	$if swms.platform.SWMS_REMOTE_DB $then
-		SELECT COUNT(*) INTO  v_swms_host_exists FROM  swms.sys_config
-			WHERE config_flag_name = 'SWMS_HOST';
+		SELECT COUNT(*) INTO  v_swms_host_exists FROM  swms.sys_config WHERE config_flag_name = 'SWMS_HOST';
 
 		IF v_swms_host_exists = 0 THEN
 			INSERT INTO swms.sys_config
@@ -40,8 +35,7 @@ BEGIN
 		END IF;
 
 		-- Allow Network ACL for http-logger (PL_TEXT_LOG PACKAGE)
-		SELECT count(*) INTO acl_count FROM DBA_NETWORK_ACLS
-			WHERE acl = '/sys/acls/swms_http_logger.xml';
+		SELECT count(*) INTO acl_count FROM DBA_NETWORK_ACLS WHERE acl = '/sys/acls/swms_http_logger.xml';
 
 		IF acl_count = 0 THEN
 			BEGIN
@@ -58,8 +52,7 @@ BEGIN
 		END IF;
 
 		-- Allow Network ACL for swms-executer (PL_CALL_REST PACKAGE)
-		SELECT count(*) INTO acl_count FROM DBA_NETWORK_ACLS
-			WHERE acl = '/sys/acls/swms_executer.xml';
+		SELECT count(*) INTO acl_count FROM DBA_NETWORK_ACLS WHERE acl = '/sys/acls/swms_executer.xml';
 
 		IF acl_count = 0 THEN
 			BEGIN
@@ -79,5 +72,5 @@ BEGIN
 	$end
 END;
 /
-exit
+
 EOF
