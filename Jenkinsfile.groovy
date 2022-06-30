@@ -33,7 +33,7 @@ pipeline {
                 sh '''
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    beoracle_ci /tempfs/terraform/alter_user.sh 'lx076trn' 'SwmsRoot123'
+                    beoracle_ci /tempfs/terraform/alter_user.sh '${TARGET_DB}' '${ROOT_PW}'
                     "
                 '''
             }
