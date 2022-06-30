@@ -22,12 +22,12 @@ pipeline {
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/swms-devops-test"
                         scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/swms-devops-test/
                     """
-                    sh '''
+                    sh """
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile; 
                         /tempfs/swms-devops-test/verify.sh '${params.TARGETDB}' '$ROOTPW'
                         "
-                    '''
+                    """
                 }
             }
         }
