@@ -18,7 +18,7 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.ROOT_PW = sh(script: """ aws secretsmanager get-secret-value --secret-id '/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}' | jq '.SecretString' """,returnStdout: true)
+                    env.ROOT_PW = sh(script: """ aws secretsmanager get-secret-value --secret-id '/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}' | jq '.SecretString' """,returnStdout: true).tr(/"'/)
                 }
             }
         }
@@ -32,7 +32,7 @@ pipeline {
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile; 
-                        /tempfs/terraform/verify.sh '${TARGET_DB}' 'SwmsRoot123'
+                        /tempfs/terraform/verify.sh '${TARGET_DB}' '$ROOT_PW'
                         "
                     '''
                 }
