@@ -18,12 +18,13 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    env.CHEF_STATE = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true).trim()
+                    env.TARGETDB = "lx739q17"
+                    env.CHEF_STATE = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/$TARGETDB/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true).trim()
                     sh (script: '''echo "---" > "${WORKSPACE}/dev-client-rhel-7.yml"''')
                     sh (script: '''echo -e $CHEF_STATE | tr '"' "\n" >> "${WORKSPACE}/dev-client-rhel-7.yml"''')
                     sh '''
                     sed -i '/^$/d' "${WORKSPACE}/dev-client-rhel-7.yml"
-                    aws s3api put-object --bucket swms-jenkins-chef-ci --key chef_state_files/lx739q17/dev-client-rhel-7.yml --body "${WORKSPACE}/dev-client-rhel-7.yml"
+                    aws s3api put-object --bucket swms-jenkins-chef-ci --key chef_state_files/$TARGETDB/dev-client-rhel-7.yml --body "${WORKSPACE}/dev-client-rhel-7.yml"
                     '''
                 }
             }
