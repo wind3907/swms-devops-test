@@ -4,7 +4,7 @@ pipeline {
         string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
     }
     environment {
-        ROOT_PW = credentials('/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}')
+        ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
     }
     stages {
         stage('Checkout SCM') {
