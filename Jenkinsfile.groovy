@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script{
                     env.CHEF_STATE = sh(script: ''' aws s3 cp s3://swms-infra-deployment/env:/lx739q17/terraform.tfstate - | jq '.resources | .[] | select(.name=="cheff_state") | .instances | .[] | .attributes.content' ''',returnStdout: true).trim()
-                    "echo '---' > "${WORKSPACE}/dev-client-rhel-7.yml""
+                    '''echo '---' > "${WORKSPACE}/dev-client-rhel-7.yml"'''
                     sh (script: '''echo -e $CHEF_STATE | tr '"' "\n" >> "${WORKSPACE}/dev-client-rhel-7.yml"''')
                     sh '''
                     sed -i '/^$/d' "${WORKSPACE}/dev-client-rhel-7.yml"
