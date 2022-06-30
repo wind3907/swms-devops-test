@@ -2,7 +2,7 @@ pipeline {
     agent { label 'master' }
     parameters {
         string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
-        string(name: 'ROOT_PW', defaultValue: 'lx076trn', description: 'TARGET DB')
+        string(name: 'ROOT_PW', defaultValue: '', description: 'TARGET DB')
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')

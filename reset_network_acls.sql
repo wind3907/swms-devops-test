@@ -1,7 +1,7 @@
 DECLARE
 	v_swms_host_exists NUMBER := 0;
 	acl_count Number;
-	swms_host VARCHAR2(20) := '10.133.73.158';
+	swms_host VARCHAR2(20) := '&1';
 BEGIN
 	$if swms.platform.SWMS_REMOTE_DB $then
 		SELECT COUNT(*) INTO  v_swms_host_exists FROM  swms.sys_config
