@@ -8,6 +8,8 @@ pipeline {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
         TARGET_DB = "${params.TARGET_DB}"
         TARGET_DB_ALIAS = "${params.TARGET_DB}_db"
+        SOURCE_DB = "rs048e"
+        AIX_DB_BK = "/tempfs/DBBackup/SWMS/swm1_db_*.tar.gz"
     }
     stages {
         stage('Checkout SCM') {
@@ -41,7 +43,7 @@ pipeline {
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile;
-                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB}' '${ROOT_PW}' '${AIX_DB_BK}' '${HOST_IP}'
+                        beoracle_ci /tempfs/terraform/reset_network_acls.sh '${SOURCE_DB}' '${TARGET_DB_ALIAS}' '${ROOT_PW}' '${AIX_DB_BK}' "${HOST_IP}"
                         "
                     '''
                 }
