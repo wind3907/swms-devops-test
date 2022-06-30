@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-        ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
+        // ROOT_PW = credentials("/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}")
     }
     stages {
         stage('Checkout SCM') {
@@ -18,16 +18,14 @@ pipeline {
         stage('Copy Chef Resources to S3') {
             steps {
                 script{
-                    sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net ". ~/.profile; beoracle_ci mkdir -p /tempfs/swms-devops-test"
-                        scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/swms-devops-test/
-                    """
-                    sh """
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                        . ~/.profile; 
-                        /tempfs/swms-devops-test/verify.sh '${params.TARGET_DB}' '$ROOT_PW'
-                        "
-                    """
+                    env.ROOT_PW = sh(script: '''aws secretsmanager get-secret-value --secret-id "/swms/deployment_automation/nonprod/oracle/master_creds/${params.TARGET_DB}"''',returnStdout: true)
+                }
+            }
+        }
+        stage('Copy Chef Resources to S3') {
+            steps {
+                script{
+                    echo "$ROOT_PW"
                 }
             }
         }
