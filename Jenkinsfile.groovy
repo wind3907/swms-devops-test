@@ -20,7 +20,7 @@ pipeline {
                 echo "Testing EC2 Connection"
                 
                 script{
-                    env.TARGET_DB = "lx076trn"
+                    env.TARGET_DB = "lx07trn"
                     env.HOST_IP = sh(script: '''dig +short $TARGET_DB.swms-np.us-east-1.aws.sysco.net | head -n 1''', returnStdout: true) .trim()                   
                     if (HOST_IP != ''){
                         echo "EC2 Instance is successfully created"
