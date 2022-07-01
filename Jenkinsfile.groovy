@@ -22,7 +22,7 @@ pipeline {
                 script{
                     env.TARGETDB = "lx739q18"
                     env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q18 --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    sh "${WORKSPACE}/verify.sh ${TARGETDB} ${ROOTPW}"    
+                    sh '${WORKSPACE}/verify.sh $TARGETDB $ROOTPW' 
                 }
             }
         } 
