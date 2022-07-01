@@ -16,11 +16,6 @@ pipeline {
             }
         }
         stage('Testing EC2 Connection') {
-            when {
-                expression {
-                    params.TERRAFORM_COMMAND == 'create'
-                }
-            }
             steps {
                 echo "Testing EC2 Connection"
                 
