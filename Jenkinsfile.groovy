@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'terraform-slave' }
+    agent { label 'master' }
     parameters {
         string(name: 'TARGET_DB', defaultValue: 'lx076trn', description: 'TARGET DB')
         string(name: 'ROOT_PW', defaultValue: '', description: 'TARGET DB')
@@ -20,7 +20,7 @@ pipeline {
                 echo "Testing EC2 Connection"
                 
                 script{
-                    env.TARGETDB = "lx076trn"
+                    env.TARGETDB = "${params.TARGET_DB}"
                     env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx076trn --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
                     sh '''
                         set +x
