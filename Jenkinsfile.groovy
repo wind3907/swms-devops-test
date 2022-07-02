@@ -21,7 +21,7 @@ pipeline {
                 
                 script{
                     env.TARGETDB = "${params.TARGET_DB}"
-                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx076trn --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGETDB --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
                     sh '''
                         set +x
                         source ~/.bash_profile
