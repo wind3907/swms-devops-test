@@ -20,8 +20,8 @@ pipeline {
                 echo "Testing EC2 Connection"
                 
                 script{
-                    env.TARGETDB = "lx739q18"
-                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx739q18 --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
+                    env.TARGETDB = "lx076trn"
+                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/lx076trn --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
                     sh '''
                         set +x
                         source ~/.bash_profile
