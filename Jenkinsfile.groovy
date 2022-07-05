@@ -21,7 +21,8 @@ pipeline {
                 script {
                     env.INSTANCE = 'lx739q17'
                     env.INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=lx739q17' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true)
-                    sh " aws ec2 delete-tags --resources $INSTANCE_ID --tags Key='Test' --region us-east-1 "
+                    echo "$INSTANCE_ID"
+                    // sh " aws ec2 delete-tags --resources $INSTANCE_ID --tags Key='Test' --region us-east-1 "
                 }
             }
         }  
