@@ -16,7 +16,7 @@ pipeline {
                 script{
                     env.TEST="Example varibale"
                     env.OPCO="lx076trn"
-                    env.EMAIL = sh(script: "grep $OPCO  ${WORKSPACE}/email_recipients.txt | awk '{print $2}'",returnStdout: true).trim()
+                    env.EMAIL = sh(script: "grep $OPCO  $WORKSPACE/email_recipients.txt | awk '{print $2}'",returnStdout: true).trim()
                     echo $EMAIL
                 }
             }
