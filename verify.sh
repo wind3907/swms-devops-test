@@ -1,12 +1,10 @@
 TARGETDB=$1
 ROOTPW=$2
 
-result=`sqlplus 'root/'$ROOTPW'@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST='$TARGETDB-db.swms-np.us-east-1.aws.sysco.net')(PORT='1521'))(CONNECT_DATA=(SID='SWM1')))' << EOF
-exit
-EOF`
-echo $result
-                                                                                              
-if echo $result | grep -q "Connected"                                                                                                    
-    then echo 'Connected Successfulyy'                                                                                                            
-    else exit 1                                                                                                                          
+records=`grep -c lx059trn_db /home2/dba/jcx/11gtords/tnsnames.ora`
+if [ $records == 0 ]                                                                                                    
+then
+    echo "Record is already in tnsnames"                                                                                                           
+else
+    echo "Record is not in tnsnames"  
 fi
