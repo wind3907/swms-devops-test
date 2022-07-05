@@ -5,9 +5,6 @@ records=`grep -c $TARGETDB /home2/dba/jcx/11gtords/tnsnames-test.ora`
 if [ $records == '0' ]                                                                                                    
 then
     echo "Record is not in tnsnames"
-
-else
-    echo "Record is already in tnsnames"
     cat <> /home2/dba/jcx/11gtords/tnsnames-test.ora
     $TARGETDB =
     (DESCRIPTION =
@@ -18,5 +15,7 @@ else
         (SID = swm1)
         )
     )
-    EOF       
+    EOF
+else
+    echo "Record is already in tnsnames"
 fi
