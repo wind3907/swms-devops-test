@@ -15,6 +15,7 @@ pipeline {
             steps {
                 script{
                     env.TEST="Example varibale"
+                    env.EMAIL='wimukthibw@gmail.com'
                 }
             }
         } 
@@ -26,7 +27,7 @@ pipeline {
                 emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>TEST ENV: ${ENV,var="TEST"} <br/>Check console output at $BUILD_URL to view the results.',
                     mimeType: 'text/html',
                     subject: "[SWMS-OPCO-DEPLOYMENT] - ${currentBuild.fullDisplayName}",
-                    to: 'wimukthibw@gmail.com'
+                    to: '${ENV,var="EMAIL"}'
             }
         }
         failure {
