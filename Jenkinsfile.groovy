@@ -18,16 +18,11 @@ pipeline {
         stage('Prepare db export to RDS') {
             steps {
                 echo "Section: Prepare db export to RDS"
+                sh "scp -i $SSH_KEY ${WORKSPACE}/verify.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs/11gtords/"
                 sh """
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                     . ~/.profile;
-                    records=`grep -c lx059trn_db /home2/dba/jcx/11gtords/tnsnames.ora`
-                    if [ $records == 0 ]                                                                                                    
-                    then
-                        echo "Record is already in tnsnames"                                                                                                           
-                    else
-                        echo "Record is not in tnsnames"  
-                    fi
+                    beoracle_ci /tempfs/11gtords/verify.sh
                     "
                 """
             }
