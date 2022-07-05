@@ -15,16 +15,23 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage("PMC Configuration") {
+        stage('Prepare db export to RDS') {
             steps {
-                echo "Section: PMC Configuration"
-                script {
-                    env.INSTANCE = 'lx739q17'
-                    def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
-                    sh "aws ec2 delete-tags --resources ${INSTANCE_ID} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
-                }
+                echo "Section: Prepare db export to RDS"
+                sh """
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                    . ~/.profile;
+                    records=`grep -c lx059trn_db /home2/dba/jcx/11gtords/tnsnames.ora`
+                    if [ $records == 0 ]                                                                                                    
+                    then
+                        echo "Record is already in tnsnames"                                                                                                           
+                    else
+                        echo "Record is not in tnsnames"  
+                    fi
+                    "
+                """
             }
-        }  
+        } 
         // stage('Print') {
         //     steps {
         //         script{
