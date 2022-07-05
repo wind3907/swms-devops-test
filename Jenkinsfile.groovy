@@ -20,8 +20,7 @@ pipeline {
                 echo "Section: PMC Configuration"
                 script {
                     env.INSTANCE = 'lx739q17'
-                    def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=lx739q17' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
-                    echo "${INSTANCE_ID}"
+                    def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
                     sh "aws ec2 delete-tags --resources ${INSTANCE_ID} --tags Key=hello --region us-east-1"
                 }
             }
