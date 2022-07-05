@@ -13,8 +13,9 @@ pipeline {
         }
         stage('email') {
             steps {
-                env.TEST="Example varibale"
-                echo "Section: amil"
+                script{
+                    env.TEST="Example varibale"
+                }
             }
         } 
     }
