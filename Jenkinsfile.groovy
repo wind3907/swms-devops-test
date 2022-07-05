@@ -15,22 +15,16 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage('Testing EC2 Connection') {
+        stage("PMC Configuration") {
             steps {
-                echo "Testing EC2 Connection"
-                
-                script{
-                    env.TARGETDB = "${params.TARGET_DB}"
-                    env.ROOTPW = sh(script: '''aws secretsmanager get-secret-value --secret-id /swms/deployment_automation/nonprod/oracle/master_creds/$TARGETDB --region us-east-1 | jq --raw-output '.SecretString' ''',returnStdout: true).trim()
-                    sh '''
-                        set +x
-                        source ~/.bash_profile
-                        set -x
-                        ${WORKSPACE}/verify.sh $TARGETDB $ROOTPW
-                    ''' 
+                echo "Section: PMC Configuration"
+                script {
+                    env.INSTANCE = 'lx739q17'
+                    env.INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=lx739q17' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true)
+                    sh " aws ec2 delete-tags --resources $INSTANCE_ID --tags Key='Test' --region us-east-1 "
                 }
             }
-        } 
+        }  
         // stage('Print') {
         //     steps {
         //         script{
