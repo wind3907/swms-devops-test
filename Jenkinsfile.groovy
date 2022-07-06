@@ -1,3 +1,7 @@
+
+def helloworld = fileLoader.fromGit('snapshot.version', 
+        'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
+
 pipeline {
     agent { label 'master' }
     environment {
@@ -11,13 +15,10 @@ pipeline {
                 echo "Building ${env.JOB_NAME}..."
             }
         }
-        stage('email') {
+        stage('File import check') {
             steps {
                 script{
-                    env.TEST="Example varibale"
-                    env.OPCO="lx076trn"
-                    env.EMAIL = sh(script: "grep $OPCO  $WORKSPACE/email_recipients.txt | awk '{print $2}'",returnStdout: true).trim()
-                    echo $EMAIL
+                    sh "cat $helloworld" 
                 }
             }
         } 
