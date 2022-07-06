@@ -32,7 +32,7 @@ pipeline {
                 env.EMAIL = sh(script: '''grep $TARGET_DB email-repo/email_recipients.txt | awk '{ print $2 }' ''',returnStdout: true).trim()  
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
                 
-                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Check console output at $BUILD_URL to view the results.',
+                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
                     mimeType: 'text/html',
                     subject: "[SWMS-DATA-MIGRATION-AIX-RDS] - ${currentBuild.fullDisplayName}",
                     to: '${ENV,var="EMAIL"}'
