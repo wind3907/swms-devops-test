@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script{
                     def schedule = fileLoader.fromGit('data_migration_schedule', 'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
-                    schedule.printHello()
+                    sh "echo ${schedule.schedule}"
                 }
              }
         }
