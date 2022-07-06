@@ -1,36 +1,25 @@
 pipeline {
     agent { label 'master' }
     stages {
-        stage('1') {
+        stage('Checkout SCM') {
             steps {
-                sh 'exit 0'
+                cleanWs()
+                checkout scm
+                echo "Building ${env.JOB_NAME}..."
             }
-        }
-        stage('2') {
-            steps {
-                script{
-                    try{
-                        sh "exit 1"
-                    }catch(e){
-                        currentBuild.result = 'SUCCESS'
-                    }
-                }
-            }
-        }
-        stage('3') {
-            steps {
-                sh 'exit 1'
-            }
-        }
+        } 
     }
     post {
         success {
             script {
+                env.TEST="Example varibale"
+                env.OPCO="lx036trn"
+                env.EMAIL = sh(script: "grep $OPCO $WORKSPACE/email_recipients.txt | awk '{print $2}'",returnStdout: true).trim()  
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is successful!'
-                // emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>TEST ENV: ${ENV,var="TEST"} <br/>Check console output at $BUILD_URL to view the results.',
-                //     mimeType: 'text/html',
-                //     subject: "[SWMS-OPCO-DEPLOYMENT] - ${currentBuild.fullDisplayName}",
-                //     to: '${ENV,var="EMAIL"}'
+                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>TEST ENV: ${ENV,var="TEST"} <br/>Check console output at $BUILD_URL to view the results.',
+                    mimeType: 'text/html',
+                    subject: "[SWMS-OPCO-DEPLOYMENT] - ${currentBuild.fullDisplayName}",
+                    to: '${ENV,var="EMAIL"}'
             }
         }
         failure {
