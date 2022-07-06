@@ -12,8 +12,7 @@ pipeline {
                     try{
                         sh "exit 1"
                     }catch(e){
-                        stageResult = 'FAILURE'
-                        buildResult = 'SUCCESS'
+                        currentBuild.result = 'SUCCESS'
                     }
                 }
             }
