@@ -1,5 +1,5 @@
 
-def helloworld = fileLoader.fromGit('snapshot.version', 
+def schedule = fileLoader.fromGit('data_migration_schedule.groovy', 
         'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
 
 pipeline {
@@ -18,7 +18,7 @@ pipeline {
         stage('File import check') {
             steps {
                 script{
-                    sh "cat $helloworld" 
+                    sh "cat $schedule.schedule" 
                 }
             }
         } 
