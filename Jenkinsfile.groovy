@@ -1,6 +1,6 @@
 
 def schedule = fileLoader.fromGit('data_migration_schedule.groovy', 
-        'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
+        'https://github.com/wind3907/swms-devops-test.git', 'main', '4c5daf94-f77a-4854-8a88-03fae213f59b', '')
 
 pipeline {
     agent { label 'master' }
