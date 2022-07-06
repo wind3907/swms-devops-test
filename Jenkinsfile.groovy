@@ -18,14 +18,10 @@ pipeline {
         }
         stage('File import check') {
             steps {
-                script{
-                    fileLoader.withGit('https://github.com/wind3907/swms-devops-test.git', 'main', null , '') {
-                        schedule = fileLoader.load('data_migration_schedule');
-                    }
-                    schedule.printHello()
-                }
-            }
-        } 
+                def schedule = fileLoader.fromGit('data_migration_schedule', 'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
+                schedule.printHello()
+             }
+        }
     }
     post {
         success {
