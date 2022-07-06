@@ -10,13 +10,13 @@ properties(
 )
 pipeline {
     agent { label 'master' }
-    // options {
-    //     skipDefaultCheckout()
-    // }
+    options {
+        skipDefaultCheckout()
+    }
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                dir('swms-devops-test') { checkout scm }
             }
         } 
     }
