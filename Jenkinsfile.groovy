@@ -19,7 +19,7 @@ pipeline {
         }
         stage('3') {
             steps {
-                sh 'exit 0'
+                sh 'exit 1'
             }
         }
     }
