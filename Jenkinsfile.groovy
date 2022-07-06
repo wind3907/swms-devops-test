@@ -1,28 +1,22 @@
-
-// def schedule = fileLoader.load('data_migration_schedule.groovy', 
-//         'https://github.com/wind3907/swms-devops-test.git', 'main', '4c5daf94-f77a-4854-8a88-03fae213f59b', '')
-
-
 pipeline {
     agent { label 'master' }
-    environment {
-        SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
-    }
     stages {
-        stage('Checkout SCM') {
+        stage('1') {
             steps {
-                cleanWs()
-                checkout scm
-                echo "Building ${env.JOB_NAME}..."
+                sh 'exit 0'
             }
         }
-        stage('File import check') {
+        stage('2') {
             steps {
-                script{
-                    def schedule = fileLoader.fromGit('data_migration_schedule', 'https://github.com/wind3907/swms-devops-test.git', 'main', null, '')
-                    sh "echo ${schedule.getSchedule()}"
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh "exit 1"
                 }
-             }
+            }
+        }
+        stage('3') {
+            steps {
+                sh 'exit 0'
+            }
         }
     }
     post {
