@@ -21,7 +21,7 @@ pipeline {
         stage('File import check') {
             steps {
                 script{
-                    sh "cat ${schedule.schedule}" 
+                    schedule.printHello()
                 }
             }
         } 
