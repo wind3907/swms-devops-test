@@ -1,6 +1,9 @@
 
-def schedule = fileLoader.fromGit('data_migration_schedule.groovy', 
-        'https://github.com/wind3907/swms-devops-test.git', 'main', '4c5daf94-f77a-4854-8a88-03fae213f59b', '')
+// def schedule = fileLoader.load('data_migration_schedule.groovy', 
+//         'https://github.com/wind3907/swms-devops-test.git', 'main', '4c5daf94-f77a-4854-8a88-03fae213f59b', '')
+fileLoader.withGit('https://github.com/wind3907/swms-devops-test.git', 'main', '4c5daf94-f77a-4854-8a88-03fae213f59b', '') {
+    schedule = fileLoader.load('data_migration_schedule');
+}
 
 pipeline {
     agent { label 'master' }
@@ -18,7 +21,7 @@ pipeline {
         stage('File import check') {
             steps {
                 script{
-                    sh "cat $schedule.schedule" 
+                    sh "cat ${schedule.schedule}" 
                 }
             }
         } 
