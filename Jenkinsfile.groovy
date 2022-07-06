@@ -40,7 +40,7 @@ pipeline {
                         message: "Build # ${currentBuild.id}",
                         factDefinitions: [[name: "Remarks", template: "${currentBuild.getBuildCauses()[0].shortDescription}"],
                                          [name: "Last Commit", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%h')}"],
-                                         [name: "Last Commit Author", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%an')}"]
+                                         [name: "Last Commit Author", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%an')}"],
                                          [name: "Target Database", template: "${params.TARGET_DB}"]],
                         color: (currentBuild.currentResult == 'SUCCESS') ? '#11fa1d' : '#FA113D',
                         status: currentBuild.currentResult
