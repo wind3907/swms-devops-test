@@ -43,8 +43,9 @@ pipeline {
                     subject: "[SWMS-DATA-MIGRATION-AIX-RDS] - ${currentBuild.fullDisplayName}",
                     to: '${ENV,var="EMAIL"}'
                 
-                withCredentials([string(credentialsId: '/swms/jenkins/swms-opco-build/teams-webhook-url-nonprod', variable: 'TEAMS_WEBHOOK_URL')]) {
+                withCredentials([aws(credentialsId: '/swms/jenkins/swms-data-migration', accessKeyVariable: 'TEAMS_WEBHOOK_URL', secretKeyVariable: 'TEAMS_WEBHOOK_URL_SECRET')]) {
                    sh "echo ${TEAMS_WEBHOOK_URL}"
+                   sh "echo ${TEAMS_WEBHOOK_URL_SECRET}"
                 }
             }
         }
