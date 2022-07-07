@@ -45,6 +45,7 @@ pipeline {
                     to: '${ENV,var="EMAIL"}'
                 
                 withCredentials([string(credentialsId: '/swms/jenkins/swms-data-migration-aix-rds', variable: 'TEAMS_WEBHOOK_URL')]) {
+                    sh "echo ${TEAMS_WEBHOOK_URL}"
                     office365ConnectorSend webhookUrl: TEAMS_WEBHOOK_URL,
                         message: "Build # ${currentBuild.id}",
                         factDefinitions: [[name: "Remarks", template: "${currentBuild.getBuildCauses()[0].shortDescription}"],
