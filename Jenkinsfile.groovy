@@ -1,9 +1,3 @@
-@NonCPS
-def loadProperties() {
-	checkout scm
-	File propertiesFile = new File('${workspace}/email_recipients.txt')
-	sh "cat propertiesFile"
-}
 properties(
     [
         buildDiscarder(logRotator(numToKeepStr: '20')),
@@ -28,12 +22,40 @@ pipeline {
         stage('Test'){
             steps {
                 script {
-                    sh "echo 'hi'"
+                    sh "echo 'This is a test'"
                 }
             }
         } 
     }
     post {
+        always {
+            script {
+                env.SOURCE_DB = 'rs048e'
+                env,TARGET_DB = 'lx048trn'
+                dir("selector-academy") {
+                    git branch: "master",
+                    credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
+                    url: "https://github.com/SyscoCorporation/selector-academy.git"
+                }
+                env.EMAIL = sh(script: '''grep $TARGET_DB selector-academy/email_recipients.txt | awk '{ print $2 }' ''',returnStdout: true).trim()
+                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Source Database: $SOURCE_DB <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
+                    mimeType: 'text/html',
+                    subject: "[SWMS-DATA-MIGRATION-AIX-RDS] - ${currentBuild.fullDisplayName}",
+                    to: '${ENV,var="EMAIL"}'
+                
+                withCredentials([string(credentialsId: '/swms/jenkins/swms-data-migration', variable: 'TEAMS_WEBHOOK_URL')]) {
+                    office365ConnectorSend webhookUrl: TEAMS_WEBHOOK_URL,
+                        message: "Build # ${currentBuild.id}",
+                        factDefinitions: [[name: "Remarks", template: "${currentBuild.getBuildCauses()[0].shortDescription}"],
+                                         [name: "Last Commit", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%h')}"],
+                                         [name: "Last Commit Author", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%an')}"],
+                                         [name: "Source Database", template: "${params.SOURCE_DB}"],
+                                         [name: "Target Database", template: "${params.TARGET_DB}"]],
+                        color: (currentBuild.currentResult == 'SUCCESS') ? '#11fa1d' : '#FA113D',
+                        status: currentBuild.currentResult
+                }
+            }
+        }
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
