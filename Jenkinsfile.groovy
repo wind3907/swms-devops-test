@@ -34,7 +34,7 @@ pipeline {
                 env.TARGET_DB = 'lx048trn'
                 dir("selector-academy") {
                     git branch: "master",
-                    credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
+                    credentialsId: '4c5daf94-f77a-4854-8a88-03fae213f59b',
                     url: "https://github.com/SyscoCorporation/selector-academy.git"
                 }
                 env.EMAIL = sh(script: '''grep $TARGET_DB selector-academy/email_recipients.txt | awk '{ print $2 }' ''',returnStdout: true).trim()
