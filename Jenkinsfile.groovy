@@ -46,6 +46,7 @@ pipeline {
                 withCredentials([string(credentialsId: '/swms/jenkins/swms-data-migration', variable: 'TEAMS_WEBHOOK_URL')]) {
                    sh "echo ${TEAMS_WEBHOOK_URL}"
                 }
+            }
         }
         success {
             script {
