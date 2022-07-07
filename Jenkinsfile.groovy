@@ -44,7 +44,7 @@ pipeline {
                     to: '${ENV,var="EMAIL"}'
                 
                 withCredentials([string(credentialsId: '/swms/jenkins/swms-data-migration', variable: 'TEAMS_WEBHOOK_URL')]) {
-                    office365ConnectorSend webhookUrl: TEAMS_WEBHOOK_URL,
+                    office365ConnectorSend webhookUrl: 'https://sysco.webhook.office.com/webhookb2/098bf2bd-d6c7-430d-a993-c584b867673e@b7aa4308-bf33-414f-9971-6e0c972cbe5d/JenkinsCI/0499dcd79e5b47918f3deb4b72ae7b21/52b05ab5-3f6f-48ee-a10f-1957d1592c08',
                         message: "Build # ${currentBuild.id}",
                         factDefinitions: [[name: "Remarks", template: "${currentBuild.getBuildCauses()[0].shortDescription}"],
                                          [name: "Last Commit", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%h')}"],
