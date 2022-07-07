@@ -31,7 +31,7 @@ pipeline {
         always {
             script {
                 env.SOURCE_DB = 'rs048e'
-                env,TARGET_DB = 'lx048trn'
+                env.TARGET_DB = 'lx048trn'
                 dir("selector-academy") {
                     git branch: "master",
                     credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
