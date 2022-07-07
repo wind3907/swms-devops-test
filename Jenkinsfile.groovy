@@ -11,18 +11,10 @@ properties(
 )
 pipeline {
     agent { label 'master' }
-    options {
-        skipDefaultCheckout()
-    }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
     }
     stages {
-        stage('Checkout SCM') {
-            steps {
-                dir('swms-devops-test') { checkout scm }
-            }
-        }
         stage('Tnsnames Configuration') {
             steps {
                 echo "Section: Tnsnames Configuration"
