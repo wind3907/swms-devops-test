@@ -1,6 +1,7 @@
 TARGETDB='lx739q17'
 
 records=`grep -c "${TARGETDB}_db" /tempfs/tnsnames-test.ora`
+echo "${records}"
 if [ $records == '0' ]                                                                                                    
 then
     echo "Record is not in tnsnames"
