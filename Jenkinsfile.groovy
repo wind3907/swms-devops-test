@@ -1,7 +1,8 @@
-dir("selector-academy") {
-    git branch: "master",
-    credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(),
-    url: "https://github.com/SyscoCorporation/selector-academy.git"
+@NonCPS
+def loadProperties() {
+	checkout scm
+	File propertiesFile = new File('${workspace}/email_recipients.txt')
+	sh "cat propertiesFile"
 }
 properties(
     [
@@ -27,7 +28,7 @@ pipeline {
         stage('Test'){
             steps {
                 script {
-                    sh "cat selector-academy/email_recipients.txt"
+                    sh "echo 'hi'"
                 }
             }
         } 
