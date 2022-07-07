@@ -3,7 +3,8 @@ properties(
         buildDiscarder(logRotator(numToKeepStr: '20')),
         parameters(
             [
-                string(name: 'TARGET_DB', description: 'The rf-host-service branch to be built and included', defaultValue: 'lx036trn',  trim: true),
+                string(name: 'TARGET_DB', description: 'The rf-host-service branch to be built and included', defaultValue: 'lx048trn',  trim: true),
+                string(name: 'SOURCE_DB', description: 'The rf-host-service branch to be built and included', defaultValue: 'rs048e',  trim: true),
             ]
         )
     ]
@@ -43,9 +44,16 @@ pipeline {
                     subject: "[SWMS-DATA-MIGRATION-AIX-RDS] - ${currentBuild.fullDisplayName}",
                     to: '${ENV,var="EMAIL"}'
                 
-                withCredentials([aws(credentialsId: '/swms/jenkins/swms-data-migration', accessKeyVariable: 'TEAMS_WEBHOOK_URL', secretKeyVariable: 'TEAMS_WEBHOOK_URL_SECRET')]) {
-                   sh "echo ${TEAMS_WEBHOOK_URL}"
-                   sh "echo ${TEAMS_WEBHOOK_URL_SECRET}"
+                withCredentials([string(credentialsId: '/swms/jenkins/swms-data-migration-aix-rds', variable: 'TEAMS_WEBHOOK_URL')]) {
+                    office365ConnectorSend webhookUrl: TEAMS_WEBHOOK_URL,
+                        message: "Build # ${currentBuild.id}",
+                        factDefinitions: [[name: "Remarks", template: "${currentBuild.getBuildCauses()[0].shortDescription}"],
+                                         [name: "Last Commit", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%h')}"],
+                                         [name: "Last Commit Author", template: "${sh(returnStdout: true, script: 'git -C swms-devops-test log -1 --pretty=format:%an')}"],
+                                         [name: "Source Database", template: "${params.SOURCE_DB}"],
+                                         [name: "Target Database", template: "${params.TARGET_DB}"]],
+                        color: (currentBuild.currentResult == 'SUCCESS') ? '#11fa1d' : '#FA113D',
+                        status: currentBuild.currentResult
                 }
             }
         }
