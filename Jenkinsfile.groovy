@@ -43,7 +43,7 @@ pipeline {
                 emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
                     mimeType: 'text/html',
                     subject: 'Data refresh successful for ${ENV,var="OPCO"}',
-                    to: '${ENV,var="EMAIL"}'
+                    to: "$EMAIL"
             }
         }
         failure {
