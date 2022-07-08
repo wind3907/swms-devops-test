@@ -41,7 +41,7 @@ pipeline {
                 echo 'SUBJECT: ${ENV,var="SUBJECT"}'
                 echo "MIMETYPE: $MIMETYPE"
                 emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
-                    mimeType: 'text/html',
+                    mimeType: "$MIMETYPE",
                     subject: 'Data refresh successful for ${ENV,var="OPCO"}',
                     to: "$EMAIL"
             }
