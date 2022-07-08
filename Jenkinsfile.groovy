@@ -13,18 +13,19 @@ pipeline {
     agent { label 'master' }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
+        TARGET_DB =  "${params.TARGET_DB}"
     }
     stages {
         stage('Tnsnames Configuration') {
             steps {
                 echo "Section: Tnsnames Configuration"
-                sh "scp -i $SSH_KEY ${WORKSPACE}/tnsnames.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs"
-                sh '''
-                    ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                    . ~/.profile;
-                    /tempfs/tnsnames.sh
-                    "
-                '''
+                // sh "scp -i $SSH_KEY ${WORKSPACE}/tnsnames.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs"
+                // sh '''
+                //     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                //     . ~/.profile;
+                //     /tempfs/tnsnames.sh
+                //     "
+                // '''
             }
         }
     }
@@ -32,6 +33,13 @@ pipeline {
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
+                def props = readProperties  file: "${WORKSPACE}/email.properties"
+                env.EMAIL = 'wind3907@sysco.com'
+                env.OPCO = 'wind3907@sysco.com'
+                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
+                    mimeType: 'text/html',
+                    subject: 'Data refresh successful for ${ENV,var="OPCO"}',
+                    to: '${ENV,var="EMAIL"}'
             }
         }
         failure {
