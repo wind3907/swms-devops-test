@@ -26,7 +26,7 @@ pipeline {
         always {
             script {
                 def now = new Date()
-                def DATE = now.format("yyMMdd.HHmm", TimeZone.getTimeZone('UTC'))
+                def DATE = now.format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone('UTC'))
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 if (currentBuild.result == 'SUCCESS'){
                     env.SUBJECT = props['subject_successfull']
@@ -39,7 +39,7 @@ pipeline {
                 def OPCO = sh(script: 'echo $TARGET_DB | cut -c3-5',returnStdout: true)
                 emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
-                    subject: "$SUBJECT for $OPCO at $DATE",
+                    subject: "$SUBJECT for $OPCO at $DATE UTC",
                     to: "$EMAIL"
             }
         }
