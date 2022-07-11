@@ -41,7 +41,7 @@ pipeline {
                 }
                 def BODY = props['body']
                 def MIMETYPE = props['mimeType']
-                def EMAIL = 'wimukthibw@gmail.com'
+                def EMAIL = 'wimukthibw@gmail.com,wind3907@sysco.com'
                 def OPCO = sh(script: 'echo $TARGET_DB | cut -c3-5',returnStdout: true)
                 emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
