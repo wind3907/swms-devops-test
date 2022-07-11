@@ -27,12 +27,11 @@ pipeline {
         always {
             script {
                 if (currentBuild.result == 'SUCCESS'){
-                    echo "success"
+                    def SUBJECT = props['subject_successfull']
                 }else{
-                    echo 'fail'
+                    def SUBJECT = props['subject_failed']
                 }
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
-                def SUBJECT = props['subject_successfull']
                 def BODY = props['body']
                 def MIMETYPE = props['mimeType']
                 def EMAIL = 'wind3907@sysco.com'
