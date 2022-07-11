@@ -1,7 +1,7 @@
 TARGETDB=$1
 TARGETDB_ALIAS=$(echo $TARGETDB | tr 'a-z' 'A-Z')
 
-records=`grep -c "SWM1_${TARGETDB_ALIAS}" /tempfs/tnsnames-test.ora`
+records=`grep -c "SWM1_${TARGETDB_ALIAS}" /u01/app/oracle/config/domains/frsdomain/config/fmwconfig/tnsnames-test.ora`
 echo "${records}"
 if [ $records == '0' ]                                                                                                    
 then
