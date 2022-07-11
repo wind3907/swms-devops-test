@@ -10,9 +10,9 @@ then
 SWM1_${TARGETDB_ALIAS} =
   (DESCRIPTION =
     (ADDRESS_LIST =
-      (ADDRESS = (PROTOCOL = TCP)(HOST =${TARGETDB}-db.coz2zoxeiq71.us-east-1.rds.amazonaws.com)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = TCP)(HOST = ${TARGETDB}-db.swms-np.us-east-1.aws.sysco.net)(PORT = 1521))
     )
-   (CONNECT_DATA =
+    (CONNECT_DATA =
       (SID = swm1)
     )
   )

@@ -33,6 +33,12 @@ pipeline {
     post {
         success {
             script {
+                sh '''
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@lx239wl.swms-np.us-east-1.aws.sysco.net "
+                    . ~/.profile;
+                    rm /tempfs/tnsnames_config.sh
+                    "
+                '''
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
             }
         }
