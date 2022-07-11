@@ -28,10 +28,11 @@ pipeline {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 env.SUBJECT = props['subject']
+                env.BODY = props['body']
                 env.MIMETYPE = props['mimeType']
                 env.EMAIL = 'wind3907@sysco.com'
                 env.OPCO = '036'
-                emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
+                emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
                     subject: "$SUBJECT $OPCO",
                     to: "$EMAIL"
