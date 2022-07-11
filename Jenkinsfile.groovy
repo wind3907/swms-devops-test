@@ -32,7 +32,7 @@ pipeline {
                 env.EMAIL = 'wind3907@sysco.com'
                 env.OPCO = '036'
                 emailext body: 'Project: $PROJECT_NAME <br/>Build # $BUILD_NUMBER <br/>Status: $BUILD_STATUS <br/>Target Database: $TARGET_DB <br/>Check console output at $BUILD_URL to view the results.',
-                    mimeType: '$MIMETYPE',
+                    mimeType: "$MIMETYPE",
                     subject: "$SUBJECT $OPCO",
                     to: "$EMAIL"
             }
