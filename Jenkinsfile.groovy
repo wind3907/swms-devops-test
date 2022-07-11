@@ -11,7 +11,7 @@ pipeline {
                     env.INSTANCE = "lx222trn"
                     env.INSTANCE_DB = "lx222trn-db"
                     def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
-                    def INSTANCE_DB_ARN = sh(script: "aws rds describe-db-instances --db-instance-identifier $INSTANCE_DB --region us-east-1", returnStdout: true).trim()
+                    def INSTANCE_DB_ARN = sh(script: "aws rds describe-db-instances --db-instance-identifier $INSTANCE_DB --query DBInstances[*].[DBInstanceArn] --output text --region us-east-1", returnStdout: true).trim()
                     echo "$INSTANCE_DB_ARN"
                 }
             }
