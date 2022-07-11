@@ -25,6 +25,12 @@ pipeline {
     post {
         always {
             script {
+                dir("selector-academy") {
+                    git branch: "master",
+                    credentialsId: '4c5daf94-f77a-4854-8a88-03fae213f59b',
+                    url: "https://github.com/wind3907/swms-devops-test.git"
+                }
+
                 def now = new Date()
                 def DATE = now.format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone('UTC'))
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
@@ -35,7 +41,7 @@ pipeline {
                 }
                 def BODY = props['body']
                 def MIMETYPE = props['mimeType']
-                def EMAIL = 'wind3907@sysco.com'
+                def EMAIL = sh(script: '''grep $TARGET_DB selector-academy/email_recipients.txt | awk '{ print $2 }' ''',returnStdout: true).trim()
                 def OPCO = sh(script: 'echo $TARGET_DB | cut -c3-5',returnStdout: true)
                 emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
