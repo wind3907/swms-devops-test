@@ -41,7 +41,7 @@ pipeline {
                 }
                 def BODY = props['body']
                 def MIMETYPE = props['mimeType']
-                def EMAIL = sh(script: '''grep $TARGET_DB selector-academy/email_recipients.txt | awk '{ print $2 }' ''',returnStdout: true).trim()
+                def EMAIL = 'wimukthibw@gmail.com'
                 def OPCO = sh(script: 'echo $TARGET_DB | cut -c3-5',returnStdout: true)
                 emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
