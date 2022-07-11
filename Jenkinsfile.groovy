@@ -18,37 +18,17 @@ pipeline {
     stages {
         stage('Tnsnames Configuration') {
             steps {
-                echo "Section: Tnsnames Configuration"
+                sh 'scp -i $SSH_KEY ${WORKSPACE}/tnsnames_config.sh ${SSH_KEY_USR}@lx239wl.swms-np.us-east-1.aws.sysco.net:/tempfs'
+                sh '''
+                    ssh -i $SSH_KEY ${SSH_KEY_USR}@lx239wl.swms-np.us-east-1.aws.sysco.net "
+                    . ~/.profile;
+                    beoracle_ci /tempfs/tnsnames_config.sh '${TARGET_DB}'
+                    "
+                '''
             }
         }
     }
     post {
-        always {
-            script {
-                dir("selector-academy") {
-                    git branch: "master",
-                    credentialsId: '4c5daf94-f77a-4854-8a88-03fae213f59b',
-                    url: "https://github.com/wind3907/swms-devops-test.git"
-                }
-
-                def now = new Date()
-                def DATE = now.format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone('UTC'))
-                def props = readProperties  file: "${WORKSPACE}/email.properties"
-                if (currentBuild.result == 'SUCCESS'){
-                    env.SUBJECT = props['subject_successfull']
-                }else{
-                    env.SUBJECT = props['subject_failed']
-                }
-                def BODY = props['body']
-                def MIMETYPE = props['mimeType']
-                def EMAIL = 'wimukthibw@gmail.com,wind3907@sysco.com'
-                def OPCO = sh(script: 'echo $TARGET_DB | cut -c3-5',returnStdout: true)
-                emailext body: "$BODY",
-                    mimeType: "$MIMETYPE",
-                    subject: "$SUBJECT for $OPCO at $DATE UTC",
-                    to: "$EMAIL"
-            }
-        }
         success {
             script {
                 echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'

@@ -1,12 +1,13 @@
-TARGETDB='lx739q17'
+TARGETDB=$1
+TARGETDB_ALIAS=$(echo $TARGETDB | tr 'a-z' 'A-Z')
 
-records=`grep -c "${TARGETDB}_db" /tempfs/tnsnames-test.ora`
+records=`grep -c "SWM1_${TARGETDB_ALIAS}" /tempfs/tnsnames-test.ora`
 echo "${records}"
 if [ $records == '0' ]                                                                                                    
 then
     echo "Record is not in tnsnames"
-    tee -a /tempfs/tnsnames-test.ora <<EOF
-${TARGETDB}_db =
+    tee -a /u01/app/oracle/config/domains/frsdomain/config/fmwconfig/tnsnames-test.ora <<EOF
+SWM1_${TARGETDB_ALIAS} =
   (DESCRIPTION =
     (ADDRESS_LIST =
       (ADDRESS = (PROTOCOL = TCP)(HOST =${TARGETDB}-db.coz2zoxeiq71.us-east-1.rds.amazonaws.com)(PORT = 1521))
@@ -16,7 +17,6 @@ ${TARGETDB}_db =
     )
   )
 EOF
-
 else
     echo "Record is already in tnsnames"
 fi
