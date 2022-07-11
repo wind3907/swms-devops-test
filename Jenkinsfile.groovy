@@ -28,9 +28,9 @@ pipeline {
             script {
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 if (currentBuild.result == 'SUCCESS'){
-                    def SUBJECT = props['subject_successfull']
+                    env.SUBJECT = props['subject_successfull']
                 }else{
-                    def SUBJECT = props['subject_failed']
+                    env.SUBJECT = props['subject_failed']
                 }
                 def BODY = props['body']
                 def MIMETYPE = props['mimeType']
