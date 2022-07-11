@@ -19,7 +19,6 @@ pipeline {
         stage('Tnsnames Configuration') {
             steps {
                 echo "Section: Tnsnames Configuration"
-                sh 'exit 1'
             }
         }
     }
