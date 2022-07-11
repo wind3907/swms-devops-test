@@ -22,6 +22,7 @@ pipeline {
                 sh '''
                     ssh -i $SSH_KEY ${SSH_KEY_USR}@lx239wl.swms-np.us-east-1.aws.sysco.net "
                     . ~/.profile;
+                    chmod 777 /tempfs/tnsnames_config.sh 
                     beoracle_ci /tempfs/tnsnames_config.sh '${TARGET_DB}'
                     "
                 '''
