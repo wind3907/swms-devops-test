@@ -1,5 +1,0 @@
-directory=DATA_PUMP_DIR
-logfile=swms_imprds.log
-dumpfile=expswms.dmp
-SCHEMAS=swms
-TABLE_EXISTS_ACTION=REPLACE
