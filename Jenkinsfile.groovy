@@ -19,13 +19,6 @@ pipeline {
         stage('Tnsnames Configuration') {
             steps {
                 echo "Section: Tnsnames Configuration"
-                // sh "scp -i $SSH_KEY ${WORKSPACE}/tnsnames.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs"
-                // sh '''
-                //     ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                //     . ~/.profile;
-                //     /tempfs/tnsnames.sh
-                //     "
-                // '''
             }
         }
     }
