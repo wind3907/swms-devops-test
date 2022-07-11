@@ -27,9 +27,9 @@ pipeline {
         always {
             script {
                 if (currentBuild.result == 'SUCCESS'){
-                    def SUBJECT = props['subject_successfull']
+                    env.SUBJECT = props['subject_successfull']
                 }else{
-                    def SUBJECT = props['subject_failed']
+                    env.SUBJECT = props['subject_failed']
                 }
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 def BODY = props['body']
