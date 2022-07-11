@@ -25,7 +25,11 @@ pipeline {
     post {
         always {
             script {
-                sh "echo $BUILD_STATUS"
+                if (currentBuild.result = 'SUCCESS'){
+                    echo "success"
+                }else{
+                    echo 'fail'
+                }
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 def SUBJECT = props['subject_successfull']
                 def BODY = props['body']
