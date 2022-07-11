@@ -20,8 +20,10 @@ pipeline {
                 echo "Section: PMC Configuration"
                 script {
                     env.INSTANCE = "lx222trn"
+                    env.INSTANCE_DB = "lx222trn-db"
                     def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
                     sh "aws ec2 create-tags --resources ${INSTANCE_ID} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
+                    sh "aws rds add-tags-to-resource --resource-name ${INSTANCE_DB} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
                 }
             }
         }
