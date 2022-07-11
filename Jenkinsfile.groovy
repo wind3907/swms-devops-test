@@ -25,7 +25,6 @@ pipeline {
     post {
         always {
             script {
-                echo "$BUILD_STATUS"
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 def SUBJECT = props['subject_successfull']
                 def BODY = props['body']
