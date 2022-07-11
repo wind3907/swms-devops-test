@@ -25,7 +25,7 @@ pipeline {
     post {
         always {
             script {
-                if (currentBuild.result = 'SUCCESS'){
+                if (currentBuild.result == 'SUCCESS'){
                     echo "success"
                 }else{
                     echo 'fail'
