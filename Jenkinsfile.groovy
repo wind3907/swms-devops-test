@@ -14,13 +14,15 @@ pipeline {
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
     }
-    stage("PMC Configuration") {
-        steps {
-            echo "Section: PMC Configuration"
-            script {
-                env.INSTANCE = "lx222trn"
-                def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
-                sh "aws ec2 create-tags --resources ${INSTANCE_ID} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
+    stages {
+        stage("PMC Configuration") {
+            steps {
+                echo "Section: PMC Configuration"
+                script {
+                    env.INSTANCE = "lx222trn"
+                    def INSTANCE_ID = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=$INSTANCE' --query Reservations[*].Instances[*].[InstanceId] --output text --region us-east-1", returnStdout: true).trim()
+                    sh "aws ec2 create-tags --resources ${INSTANCE_ID} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
+                }
             }
         }
     }
