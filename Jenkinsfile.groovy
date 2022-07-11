@@ -23,9 +23,9 @@ pipeline {
         }
     }
     post {
-        success {
+        always {
             script {
-                echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
+                echo "$$BUILD_STATUS"
                 def props = readProperties  file: "${WORKSPACE}/email.properties"
                 def SUBJECT = props['subject_successfull']
                 def BODY = props['body']
@@ -36,6 +36,11 @@ pipeline {
                     mimeType: "$MIMETYPE",
                     subject: "$SUBJECT $OPCO",
                     to: "$EMAIL"
+            }
+        }
+        success {
+            script {
+                echo 'Data migration from Oracle 11 AIX to Oracle 19 RDS is Success'
             }
         }
         failure {
