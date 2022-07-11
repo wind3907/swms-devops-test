@@ -31,7 +31,7 @@ pipeline {
                 env.BODY = props['body']
                 env.MIMETYPE = props['mimeType']
                 env.EMAIL = 'wind3907@sysco.com'
-                env.OPCO = '036'
+                env.OPCO = sh(script: 'echo $TARGET_DB | cut -c2-6',returnStdout: true)
                 emailext body: "$BODY",
                     mimeType: "$MIMETYPE",
                     subject: "$SUBJECT $OPCO",
