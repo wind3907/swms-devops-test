@@ -1,0 +1,6 @@
+SCHEMAS=swms 
+directory=DATA_PUMP_DIR 
+dumpfile=expswms.dmp 
+logfile=expswms.log
+PARALLEL=1
+COMPRESSION=DATA_ONLY
