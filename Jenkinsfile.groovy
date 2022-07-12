@@ -13,13 +13,14 @@ pipeline {
     agent { label 'master' }
     environment {
         SSH_KEY = credentials('/swms/jenkins/swms-universal-build/svc_swmsci_000/key')
+        TARGET_DB = "${params.TARGET_DB}"
     }
     stages {
         stage("Remove PMC Configuration") {
             steps {
                 echo "Section: Remove PMC Configuration"
                 script {
-                    sh "aws rds wait db-instance-available --db-instance-identifier lx076trn-db"
+                    sh "aws rds wait db-instance-available --db-instance-identifier $TARGET_DB-db"
                 }
             }
         }
