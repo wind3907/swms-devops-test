@@ -33,7 +33,7 @@ pipeline {
                 echo "Section: Remove PMC Configuration"
                 script {
                     sh "aws ec2 delete-tags --resources ${INSTANCE_ID} --tags Key='Automation:PMC',Value='Always On' --region us-east-1"
-                    sh "aws rds remove-tags-from-resource --resource-name ${INSTANCE_DB_ARN} --tag-keys 'Automation:PMC' --region us-east-1"
+                    sh "aws rds remove-tags-from-resource --resource-name ${INSTANCE_DB_ARN} --tags-keys 'Automation:PMC' --region us-east-1"
                 }
             }
         }
