@@ -24,7 +24,7 @@ pipeline {
                     scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs
                     '''
                     sh '''
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@$rs1060b1.na.sysco.net "
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
                         . ~/.profile;
                         beoracle_ci /tempfs/rds_configurations.sh
                         "
