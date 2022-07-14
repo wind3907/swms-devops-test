@@ -25,6 +25,7 @@ pipeline {
                     '''
                     sh '''
                         ssh -i $SSH_KEY ${SSH_KEY_USR}@$rs1060b1.na.sysco.net "
+                        . ~/.profile;
                         beoracle_ci /tempfs/rds_configurations.sh
                         "
                     ''' 
