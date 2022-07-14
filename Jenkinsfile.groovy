@@ -16,11 +16,26 @@ pipeline {
         TARGET_DB = "${params.TARGET_DB}"
     }
     stages {
-        stage("Remove PMC Configuration") {
+        stage("Production Version") {
             steps {
-                echo "Section: Remove PMC Configuration"
+                echo "Section: Production Version"
                 script {
-                    sh "aws rds wait db-instance-available --db-instance-identifier $TARGET_DB-db"
+                    sh '''
+                    scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs
+                    '''
+                    sh '''
+                        ssh -i $SSH_KEY ${SSH_KEY_USR}@$rs1060b1.na.sysco.net "
+                        beoracle_ci /tempfs/rds_configurations.sh
+                        "
+                    ''' 
+                }
+            }
+        }
+        stage("Test Env") {
+            steps {
+                echo "Section: Test Env"
+                script {
+                    echo "$WINDY"
                 }
             }
         }
