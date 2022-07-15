@@ -45,7 +45,7 @@ pipeline {
             steps {
                 echo "Section: Test Env"
                 script {
-                    echo "$WINDY"
+                    echo "Hi"
                 }
             }
         }
