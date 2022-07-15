@@ -31,7 +31,6 @@ pipeline {
                                 . /etc/profile;
                                 export ORACLE_SWMS_USER="$ORACLE_SWMS_USER";
                                 export ORACLE_SWMS_PASSWORD="$ORACLE_SWMS_PASSWORD";
-                                env.WINDY = 'Wimukthi'
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
                             ''', returnStdout: true).trim() 
