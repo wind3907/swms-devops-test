@@ -34,7 +34,7 @@ pipeline {
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
                             ''', returnStdout: true).trim() 
-                            sh "echo ${status} | grep 'Version Number' | cut -d' ' -f1 "
+                            env.version = sh(script: "echo ${status} | grep 'Version Number' | cut -d' ' -f3 ". returnStdout: true).trim()
                         }
                     }
                 }
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 echo "Section: Test Env"
                 script {
-                    echo "Hi"
+                    echo "$version"
                 }
             }
         }
