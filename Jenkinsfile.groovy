@@ -25,7 +25,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: "${ORACLE_SWMS_USR_SECRET_PATH}", usernameVariable: 'ORACLE_SWMS_USER', passwordVariable: 'ORACLE_SWMS_PASSWORD')]) {
                         script {
-                            sh '''
+                            def status = sh(script: '''
                                 scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@${TARGET_DB}.swms-np.us-east-1.aws.sysco.net:/tempfs
                                 ssh -i $SSH_KEY ${SSH_KEY_USR}@${TARGET_DB}.swms-np.us-east-1.aws.sysco.net "
                                 . /etc/profile;
@@ -34,7 +34,8 @@ pipeline {
                                 env.WINDY = 'Wimukthi'
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
-                            '''.stripIndent()
+                            ''', returnStdout: true).trim() 
+                            echo $status
                         }
                     }
                 }
