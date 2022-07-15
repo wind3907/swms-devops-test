@@ -34,7 +34,7 @@ pipeline {
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
                             ''', returnStdout: true).trim() 
-                            echo $status
+                            sh " echo $status | grep 'version no'"
                         }
                     }
                 }
