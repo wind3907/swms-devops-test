@@ -26,7 +26,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${ORACLE_SWMS_USR_SECRET_PATH}", usernameVariable: 'ORACLE_SWMS_USER', passwordVariable: 'ORACLE_SWMS_PASSWORD')]) {
                         script {
                             sh '''
-                                scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@@${TARGET_DB}.swms-np.us-east-1.aws.sysco.net:/tempfs
+                                scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@${TARGET_DB}.swms-np.us-east-1.aws.sysco.net:/tempfs
                                 ssh -i $SSH_KEY ${SSH_KEY_USR}@${TARGET_DB}.swms-np.us-east-1.aws.sysco.net "
                                 . /etc/profile;
                                 export ORACLE_SWMS_USER="$ORACLE_SWMS_USER";
