@@ -34,7 +34,7 @@ pipeline {
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
                             ''', returnStdout: true).trim() 
-                            sh " echo $status | grep 'Version Number' | awk '{ print $3 }"
+                            sh " echo $status | grep 'Version Number' | awk '{ print $3 }' "
                         }
                     }
                 }
