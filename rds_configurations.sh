@@ -1,9 +1,4 @@
-. /usr/lpp/oracle/.profile.19c
-
-export TNS_ADMIN=/home2/dba/jcx/11gtords
-export ORACLE_SID=swms_ci1
-
-
+#!/bin/bash
 version_dbcol=`sqlplus -s ${ORACLE_SWMS_USER}/${ORACLE_SWMS_PASSWORD} <<!
 set pages 0 echo off feed off
 select attribute_value
