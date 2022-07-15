@@ -17,18 +17,25 @@ pipeline {
     }
     stages {
         stage("Production Version") {
+            environment {
+                ORACLE_SWMS_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/user/swms"
+            }
             steps {
                 echo "Section: Production Version"
                 script {
-                    sh '''
-                    scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs
-                    '''
-                    sh '''
-                        ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
-                        . ~/.profile;
-                        beoracle_ci /tempfs/rds_configurations.sh
-                        "
-                    ''' 
+                    withCredentials([usernamePassword(credentialsId: "${ORACLE_SWMS_USR_SECRET_PATH}", usernameVariable: 'ORACLE_SWMS_USER', passwordVariable: 'ORACLE_SWMS_PASSWORD')]) {
+                        script {
+                            sh '''
+                                scp -i $SSH_KEY ${WORKSPACE}/rds_configurations.sh ${SSH_KEY_USR}@rs1060b1.na.sysco.net:/tempfs
+                                ssh -i $SSH_KEY ${SSH_KEY_USR}@rs1060b1.na.sysco.net "
+                                . ~/.profile;
+                                export ORACLE_SWMS_USER="$ORACLE_SWMS_USER";
+                                export ORACLE_SWMS_PASSWORD="$ORACLE_SWMS_PASSWORD";
+                                beoracle_ci /tempfs/rds_configurations.sh
+                                "
+                            '''.stripIndent()
+                        }
+                    }
                 }
             }
         }

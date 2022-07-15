@@ -4,8 +4,20 @@ export TNS_ADMIN=/home2/dba/jcx/11gtords
 export ORACLE_SID=swms_ci1
 
 
-env.WINDY="Wimukthi"
-# sqlplus root/$ROOTPW@$TARGETDB << EOF
-
-# exit
-# EOF
+version_dbcol=`sqlplus -s ${ORACLE_SWMS_USER}/${ORACLE_SWMS_PASSWORD} <<!
+set pages 0 echo off feed off
+select attribute_value
+  FROM maintenance m
+  WHERE attribute = 'LEVEL'
+    AND application = 'SWMS'
+    AND component = 'SCHEMA'
+    AND create_date = ( SELECT max(create_date)
+                          FROM maintenance d
+                          WHERE d.attribute = m.attribute
+                          AND d.component = m.component
+                          AND d.application = m.application
+                      );
+commit;
+!
+`
+echo "version no from DB" $version_dbcol
