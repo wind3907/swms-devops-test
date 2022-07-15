@@ -15,4 +15,4 @@ select attribute_value
 commit;
 !
 `
-echo "version no from DB" $version_dbcol
+echo "Version Number" $version_dbcol
