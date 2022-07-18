@@ -49,8 +49,7 @@ pipeline {
                     // env.process = sh (script: "aws s3api list-objects --bucket swms-build-artifacts --prefix linux-${SWMS_VERSION_NUMBER} --query Contents[].Key", returnStdout: true ).trim()
                     def process = "aws s3api list-objects --bucket swms-build-artifacts --prefix linux-${SWMS_VERSION_NUMBER} --query Contents[].Key".execute()
                     def version = process.text.substring(1, process.text.length()-1)
-                    def verionlist = version.tokenize(',')
-                    echo "${verionlist[0]}"
+                    echo "${version}"
                 }
             }
         }
