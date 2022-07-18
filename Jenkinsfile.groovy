@@ -16,12 +16,12 @@ pipeline {
         TARGET_DB = "${params.TARGET_DB}"
     }
     stages {
-        stage("Production Version") {
+        stage("Get Production Version") {
             environment {
                 ORACLE_SWMS_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/user/swms"
             }
             steps {
-                echo "Section: Production Version"
+                echo "Section: Get Production Version"
                 script {
                     withCredentials([usernamePassword(credentialsId: "${ORACLE_SWMS_USR_SECRET_PATH}", usernameVariable: 'ORACLE_SWMS_USER', passwordVariable: 'ORACLE_SWMS_PASSWORD')]) {
                         script {
@@ -34,7 +34,7 @@ pipeline {
                                 beoracle_ci /tempfs/rds_configurations.sh
                                 "
                             ''', returnStdout: true).trim() 
-                            env.version = sh(script: "echo ${status} | grep 'Version Number' | cut -d' ' -f3 ", returnStdout: true).trim()
+                            env.SWMS_VERSION = sh(script: "echo ${status} | grep 'Version Number' | cut -d' ' -f3 ", returnStdout: true).trim()
                         }
                     }
                 }
@@ -44,7 +44,9 @@ pipeline {
             steps {
                 echo "Section: Test Env"
                 script {
-                    echo "$version"
+                    echo "$SWMS_VERSION"
+                    env.SWMS_VERSION_NUMBER = "${env.SWMS_VERSION.substring(0,env.SWMS_VERSION.length()-2).replaceAll('\\.', '_')}"
+                    echo "$SWMS_VERSION_NUMBER"
                 }
             }
         }
