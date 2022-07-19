@@ -24,17 +24,29 @@ pipeline {
             steps {
                 echo "Section: Get Production Version"
                 script {
-                    if ("${params.ROOT_PW}" != "" ){
-                        env.ROOT_PW = "${params.ROOT_PW}"
-                    }else{
-                        withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
-                            script {
-                                if (ORACLE_DBA_USER == ''){
-                                    echo "Could not find credentials entry for the target database"
+                    try{
+                        if ("${params.ROOT_PW}" != "" ){
+                            env.ROOT_PW = "${params.ROOT_PW}"
+                        }else{
+                            withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
+                                script {
+                                    if (ORACLE_DBA_USER == ''){
+                                        echo "Oracle Master Password is available"
+                                    }
                                 }
                             }
                         }
+                    }catch(e){
+                        echo "Oracle Master Password is not available"
                     }
+                    
+                }
+            }
+        }
+        stage("test"){
+            steps {
+                script {
+                    echo "Executed"
                 }
             }
         }
