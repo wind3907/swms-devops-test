@@ -25,12 +25,13 @@ pipeline {
                 echo "Section: Get Production Version"
                 script {
                     if ("${params.ROOT_PW}" != "" ){
-                        env.ORACLE_DBA_PASSWORD = "${params.ROOT_PW}"
+                        env.ROOT_PW = "${params.ROOT_PW}"
                     }else{
                         withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
                             script {
-                                sh 'set +x'
-                                env.ORACLE_DBA_PASSWORD = ORACLE_DBA_PASSWORD
+                                env.ROOT_PW = ORACLE_DBA_PASSWORD
+                                echo "${ORACLE_DBA_PASSWORD}"
+                                echo "${ROOT_PW}"
                             }
                         }
                     }
@@ -41,7 +42,7 @@ pipeline {
             steps {
                 echo "Section: Test Env"
                 script {
-                    echo "${ORACLE_DBA_PASSWORD}"
+                    echo "${ROOT_PW}"
                 }
             }
         }
