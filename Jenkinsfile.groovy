@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage("Get Production Version") {
             environment {
-                ORACLE_DBA_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/master_creds/${TARGET_DB}"
+                ORACLE_DBA_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/master_creds/test/${TARGET_DB}"
             }
             steps {
                 echo "Section: Get Production Version"
@@ -30,20 +30,9 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
                             script {
                                 env.ROOT_PW = ORACLE_DBA_PASSWORD
-                                echo "${ORACLE_DBA_PASSWORD}"
-                                echo "${ROOT_PW}"
                             }
                         }
                     }
-                    echo "${ROOT_PW}"
-                }
-            }
-        }
-        stage("Test Env") {
-            steps {
-                echo "Section: Test Env"
-                script {
-                    echo "${ROOT_PW}"
                 }
             }
         }
