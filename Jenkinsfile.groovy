@@ -29,7 +29,7 @@ pipeline {
                     }else{
                         withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
                             script {
-                                set +x
+                                sh 'set +x'
                                 env.ORACLE_DBA_PASSWORD = ORACLE_DBA_PASSWORD
                             }
                         }
