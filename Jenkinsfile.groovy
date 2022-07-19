@@ -38,6 +38,7 @@ pipeline {
                         }
                     }catch(e){
                         echo "Oracle Master Password is not available"
+                        sh 'exit 1'
                     }
                     
                 }
