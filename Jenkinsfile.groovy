@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage("Get Production Version") {
             environment {
-                ORACLE_SWMS_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/master_creds/${TARGET_DB}"
+                ORACLE_DBA_USR_SECRET_PATH = "/swms/deployment_automation/nonprod/oracle/master_creds/${TARGET_DB}"
             }
             steps {
                 echo "Section: Get Production Version"
@@ -32,7 +32,6 @@ pipeline {
                                 env.ORACLE_DBA_PASSWORD = ORACLE_DBA_PASSWORD
                             }
                         }
-                        
                     }
                 }
             }
