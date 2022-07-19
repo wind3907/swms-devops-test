@@ -29,7 +29,9 @@ pipeline {
                     }else{
                         withCredentials([usernamePassword(credentialsId: "${ORACLE_DBA_USR_SECRET_PATH}", usernameVariable: 'ORACLE_DBA_USER', passwordVariable: 'ORACLE_DBA_PASSWORD')]) {
                             script {
-                                env.ROOT_PW = ORACLE_DBA_PASSWORD
+                                if (ORACLE_DBA_USER == ''){
+                                    echo "Could not find credentials entry for the target database"
+                                }
                             }
                         }
                     }
